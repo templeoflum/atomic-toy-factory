@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vector Echo</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #effffc;
+      --muted: #88aaa6;
+      --mint: #7fffd8;
+      --panel: rgba(8, 22, 27, .78);
+      --line: rgba(157, 255, 232, .16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; height: 100%; margin: 0; }
+
+    body {
+      overflow: hidden;
+      background: #041014;
+      color: var(--ink);
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    main {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(20, 76, 78, .24), transparent 47%),
+        linear-gradient(145deg, #06171b, #03090d 72%);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      touch-action: none;
+      outline: none;
+    }
+
+    canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--mint); }
+
+    .masthead {
+      position: absolute;
+      z-index: 2;
+      top: clamp(18px, 4vw, 38px);
+      left: clamp(18px, 5vw, 52px);
+      pointer-events: none;
+      text-shadow: 0 2px 18px #031015;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 4vw, 2rem);
+      letter-spacing: .18em;
+      font-weight: 650;
+      text-transform: uppercase;
+    }
+
+    .hint {
+      margin: .5rem 0 0;
+      color: var(--muted);
+      font-size: clamp(.68rem, 1.7vw, .78rem);
+      letter-spacing: .08em;
+    }
+
+    .controls {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: clamp(16px, 4vw, 34px);
+      translate: -50% 0;
+      width: min(430px, calc(100% - 28px));
+      padding: 14px 16px 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: 0 18px 54px rgba(0, 0, 0, .35), inset 0 1px rgba(255, 255, 255, .04);
+      backdrop-filter: blur(14px);
+    }
+
+    .control-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      color: #c7e7e1;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    output {
+      color: var(--mint);
+      font-size: .78rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      display: block;
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      cursor: ew-resize;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--mint) 0 var(--fill), rgba(149, 214, 204, .16) var(--fill));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 22px;
+      height: 22px;
+      margin-top: -9px;
+      appearance: none;
+      border: 2px solid #d9fff7;
+      border-radius: 50%;
+      background: #0b4949;
+      box-shadow: 0 0 0 5px rgba(127, 255, 216, .09), 0 0 18px rgba(127, 255, 216, .48);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(149, 214, 204, .16);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 4px;
+      border-radius: 99px;
+      background: var(--mint);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 19px;
+      height: 19px;
+      border: 2px solid #d9fff7;
+      border-radius: 50%;
+      background: #0b4949;
+      box-shadow: 0 0 0 5px rgba(127, 255, 216, .09), 0 0 18px rgba(127, 255, 216, .48);
+    }
+
+    input[type="range"]:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
+    @media (max-height: 410px) {
+      .masthead { top: 14px; left: 18px; }
+      .hint { display: none; }
+      .controls { bottom: 10px; padding-block: 9px 10px; }
+      .control-row { margin-bottom: 3px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <canvas id="field" tabindex="0" aria-label="Animated field of directional particles. Drag to bend their course; arrow keys move the attractor."></canvas>
+
+    <header class="masthead">
+      <h1>Vector Echo</h1>
+      <p class="hint">Drag the current · watch direction become memory</p>
+    </header>
+
+    <section class="controls" aria-label="Trail controls">
+      <div class="control-row">
+        <label for="memory">Motion memory</label>
+        <output id="readout" for="memory" aria-live="polite">2.4 s</output>
+      </div>
+      <input id="memory" type="range" min="4" max="50" value="24" step="1" aria-describedby="readout">
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.querySelector('#field');
+      const ctx = canvas.getContext('2d');
+      const slider = document.querySelector('#memory');
+      const readout = document.querySelector('#readout');
+      const TAU = Math.PI * 2;
+      const colors = ['#76ffe0', '#69cfff', '#c19bff', '#ffd47a'];
+      let w = 0, h = 0, dpr = 1, last = performance.now();
+      let pointer = { x: 0, y: 0, active: false, visible: false };
+      let memoryFrames = Number(slider.value) * 6;
+      const motes = [];
+
+      const rand = (min, max) => min + Math.random() * (max - min);
+
+      function makeMote(i) {
+        const angle = rand(0, TAU);
+        const radius = rand(28, Math.max(32, Math.min(w, h) * .34));
+        const x = w * .5 + Math.cos(angle) * radius;
+        const y = h * .47 + Math.sin(angle) * radius;
+        return {
+          x, y,
+          vx: Math.cos(angle + Math.PI / 2) * rand(.28, .75),
+          vy: Math.sin(angle + Math.PI / 2) * rand(.28, .75),
+          color: colors[i % colors.length],
+          phase: rand(0, TAU),
+          history: [{ x, y }]
+        };
+      }
+
+      function desiredCount() {
+        return Math.max(12, Math.min(30, Math.round((w * h) / 26000)));
+      }
+
+      function populate() {
+        const count = desiredCount();
+        while (motes.length < count) motes.push(makeMote(motes.length));
+        if (motes.length > count) motes.length = count;
+      }
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const oldW = w || rect.width;
+        const oldH = h || rect.height;
+        w = Math.max(1, rect.width);
+        h = Math.max(1, rect.height);
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        motes.forEach(m => {
+          m.x *= w / oldW; m.y *= h / oldH;
+          m.history = m.history.slice(-memoryFrames).map(p => ({ x: p.x * w / oldW, y: p.y * h / oldH }));
+        });
+        if (!pointer.visible) { pointer.x = w * .5; pointer.y = h * .46; }
+        populate();
+      }
+
+      function setMemory() {
+        const tenths = Number(slider.value);
+        memoryFrames = tenths * 6;
+        readout.value = `${(tenths / 10).toFixed(1)} s`;
+        slider.style.setProperty('--fill', `${(tenths - 4) / 46 * 100}%`);
+        motes.forEach(m => { if (m.history.length > memoryFrames) m.history.splice(0, m.history.length - memoryFrames); });
+      }
+
+      function setPointer(event) {
+        const r = canvas.getBoundingClientRect();
+        pointer.x = event.clientX - r.left;
+        pointer.y = event.clientY - r.top;
+        pointer.visible = true;
+      }
+
+      canvas.addEventListener('pointerdown', event => {
+        pointer.active = true;
+        setPointer(event);
+        canvas.setPointerCapture(event.pointerId);
+      });
+      canvas.addEventListener('pointermove', event => {
+        if (pointer.active || event.pointerType === 'mouse') setPointer(event);
+      });
+      canvas.addEventListener('pointerup', event => {
+        pointer.active = false;
+        if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+      });
+      canvas.addEventListener('pointercancel', () => { pointer.active = false; });
+      canvas.addEventListener('keydown', event => {
+        const moves = { ArrowLeft: [-24, 0], ArrowRight: [24, 0], ArrowUp: [0, -24], ArrowDown: [0, 24] };
+        if (!moves[event.key]) return;
+        event.preventDefault();
+        pointer.visible = true;
+        pointer.x = Math.max(0, Math.min(w, pointer.x + moves[event.key][0]));
+        pointer.y = Math.max(0, Math.min(h, pointer.y + moves[event.key][1]));
+      });
+      slider.addEventListener('input', setMemory);
+      new ResizeObserver(resize).observe(canvas);
+
+      function update(m, dt, time) {
+        const anchorX = pointer.visible ? pointer.x : w * .5 + Math.cos(time * .00017) * w * .1;
+        const anchorY = pointer.visible ? pointer.y : h * .46 + Math.sin(time * .00021) * h * .08;
+        const dx = anchorX - m.x;
+        const dy = anchorY - m.y;
+        const dist = Math.max(30, Math.hypot(dx, dy));
+        const pull = pointer.active ? .00135 : .00056;
+        const swirl = .0013 * Math.min(1.7, 180 / dist);
+        const flutter = Math.sin(time * .0016 + m.phase) * .008;
+        m.vx += (dx * pull - dy * swirl + Math.cos(m.phase) * flutter) * dt;
+        m.vy += (dy * pull + dx * swirl + Math.sin(m.phase) * flutter) * dt;
+
+        const speed = Math.hypot(m.vx, m.vy);
+        const maxSpeed = pointer.active ? 3.6 : 2.4;
+        if (speed > maxSpeed) { m.vx *= maxSpeed / speed; m.vy *= maxSpeed / speed; }
+        m.vx *= Math.pow(.989, dt);
+        m.vy *= Math.pow(.989, dt);
+        m.x += m.vx * dt;
+        m.y += m.vy * dt;
+
+        const pad = 30;
+        if (m.x < -pad) m.x = w + pad;
+        if (m.x > w + pad) m.x = -pad;
+        if (m.y < -pad) m.y = h + pad;
+        if (m.y > h + pad) m.y = -pad;
+
+        m.history.push({ x: m.x, y: m.y });
+        while (m.history.length > memoryFrames) m.history.shift();
+      }
+
+      function drawTrail(m) {
+        const points = m.history;
+        if (points.length < 2) return;
+        for (let i = 1; i < points.length; i++) {
+          const a = points[i - 1], b = points[i];
+          if (Math.abs(a.x - b.x) > w * .5 || Math.abs(a.y - b.y) > h * .5) continue;
+          const life = i / points.length;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineWidth = .25 + life * 2.15;
+          ctx.globalAlpha = life * life * .66;
+          ctx.strokeStyle = m.color;
+          ctx.stroke();
+        }
+
+        const angle = Math.atan2(m.vy, m.vx);
+        const size = 4.2;
+        ctx.save();
+        ctx.translate(m.x, m.y);
+        ctx.rotate(angle);
+        ctx.globalAlpha = .95;
+        ctx.shadowBlur = 13;
+        ctx.shadowColor = m.color;
+        ctx.fillStyle = '#f4fffd';
+        ctx.beginPath();
+        ctx.moveTo(size * 1.8, 0);
+        ctx.lineTo(-size, size * .72);
+        ctx.lineTo(-size * .5, 0);
+        ctx.lineTo(-size, -size * .72);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawPointer(time) {
+        if (!pointer.visible) return;
+        const pulse = 10 + Math.sin(time * .004) * 2;
+        ctx.globalAlpha = pointer.active ? .55 : .25;
+        ctx.strokeStyle = '#93ffe3';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(pointer.x, pointer.y, pulse, 0, TAU);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(pointer.x, pointer.y, 2, 0, TAU);
+        ctx.fillStyle = '#d8fff5';
+        ctx.fill();
+      }
+
+      function frame(time) {
+        const dt = Math.min(2.4, (time - last) / 16.667 || 1);
+        last = time;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.globalAlpha = .14;
+        ctx.fillStyle = '#9fffea';
+        for (let x = 28; x < w; x += 46) {
+          for (let y = 28; y < h; y += 46) ctx.fillRect(x, y, 1, 1);
+        }
+
+        motes.forEach(m => { update(m, dt, time); drawTrail(m); });
+        drawPointer(time);
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(frame);
+      }
+
+      setMemory();
+      resize();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>

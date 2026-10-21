@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Common Direction</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f0e6;
+      --muted: #a9b0b7;
+      --accent: #ffcc66;
+      --panel: rgba(12, 20, 28, .82);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #071019;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+    }
+
+    main {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 38%, rgba(27, 58, 73, .5), transparent 48%),
+        linear-gradient(145deg, #0a1720, #050b11);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .heading {
+      position: absolute;
+      z-index: 2;
+      top: clamp(20px, 4.5vh, 48px);
+      left: 50%;
+      width: min(90vw, 620px);
+      transform: translateX(-50%);
+      text-align: center;
+      pointer-events: none;
+      text-shadow: 0 2px 18px #071019;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: .18em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: clamp(12px, 1.8vw, 15px);
+      letter-spacing: .04em;
+    }
+
+    .controls {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: clamp(16px, 4vh, 38px);
+      width: min(90vw, 560px);
+      padding: 16px 20px 18px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(255, 255, 255, .11);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .35), inset 0 1px rgba(255, 255, 255, .05);
+      backdrop-filter: blur(14px);
+    }
+
+    .readouts {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .agreement {
+      color: var(--muted);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .agreement output { color: var(--ink); font-weight: 700; }
+
+    input[type="range"] {
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) var(--fill), rgba(255,255,255,.14) var(--fill));
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.14);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 6px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 26px;
+      height: 26px;
+      margin-top: -10px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 3px solid #0d1820;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255,204,102,.25), 0 3px 10px #0008;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border: 3px solid #0d1820;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255,204,102,.25), 0 3px 10px #0008;
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px #fff, 0 0 0 8px #ffcc6670; }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px #fff, 0 0 0 8px #ffcc6670; }
+
+    @media (max-height: 470px) {
+      .heading { top: 14px; text-align: left; left: 18px; transform: none; }
+      h1 { font-size: 20px; }
+      .subtitle { display: none; }
+      .controls { bottom: 10px; padding: 10px 16px 12px; }
+      .readouts { margin-bottom: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <main aria-labelledby="title">
+    <div class="heading">
+      <h1 id="title">Common Direction</h1>
+      <p class="subtitle">Small influence, shared by many, becomes a pattern.</p>
+    </div>
+
+    <canvas id="field" aria-hidden="true"></canvas>
+
+    <section class="controls" aria-label="Needle alignment control">
+      <div class="readouts">
+        <label for="pull">Neighbor pull · <output id="pullValue" for="pull">68%</output></label>
+        <span class="agreement">Agreement <output id="agreement">0%</output></span>
+      </div>
+      <input id="pull" type="range" min="0" max="100" value="68" aria-describedby="hint">
+      <span id="hint" hidden>Controls how strongly every needle turns toward the direction of nearby needles.</span>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.querySelector('#field');
+      const ctx = canvas.getContext('2d');
+      const slider = document.querySelector('#pull');
+      const pullValue = document.querySelector('#pullValue');
+      const agreementValue = document.querySelector('#agreement');
+      const tau = Math.PI * 2;
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let needles = [];
+      let columns = 0;
+      let rows = 0;
+      let last = performance.now();
+      let shownAgreement = 0;
+
+      const wrap = (n, max) => (n + max) % max;
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+        dpr = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const spacing = Math.max(24, Math.min(38, Math.sqrt(width * height / 410)));
+        columns = Math.max(8, Math.floor(width / spacing));
+        rows = Math.max(6, Math.floor(height / spacing));
+        const prior = needles;
+        needles = [];
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < columns; x++) {
+            const old = prior[(y % Math.max(1, Math.floor(prior.length / Math.max(1, columns)))) * columns + x];
+            needles.push({
+              angle: old ? old.angle : Math.random() * tau,
+              drift: (Math.random() - .5) * .28,
+              phase: Math.random() * tau
+            });
+          }
+        }
+      }
+
+      function index(x, y) {
+        return wrap(y, rows) * columns + wrap(x, columns);
+      }
+
+      function update(dt, now) {
+        const strength = Number(slider.value) / 100;
+        const next = new Float32Array(needles.length);
+        let currentX = 0;
+        let currentY = 0;
+        let globalX = 0;
+        let globalY = 0;
+
+        for (const n of needles) {
+          currentX += Math.cos(n.angle);
+          currentY += Math.sin(n.angle);
+        }
+
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < columns; x++) {
+            const i = index(x, y);
+            const n = needles[i];
+            let sx = 0;
+            let sy = 0;
+            let count = 0;
+
+            for (let oy = -1; oy <= 1; oy++) {
+              for (let ox = -1; ox <= 1; ox++) {
+                const neighbor = needles[index(x + ox, y + oy)];
+                sx += Math.cos(neighbor.angle);
+                sy += Math.sin(neighbor.angle);
+                count++;
+              }
+            }
+
+            // A light echo from the wider field lets nearby agreements spread.
+            sx += currentX * .11;
+            sy += currentY * .11;
+            count += needles.length * .11;
+
+            const target = Math.atan2(sy / count, sx / count);
+            const turn = Math.atan2(Math.sin(target - n.angle), Math.cos(target - n.angle));
+            const restless = n.drift + Math.sin(now * .0007 + n.phase) * .12;
+            next[i] = n.angle + (turn * strength * 4.1 + restless * (1 - strength * .82)) * dt;
+          }
+        }
+
+        for (let i = 0; i < needles.length; i++) {
+          needles[i].angle = next[i];
+          globalX += Math.cos(next[i]);
+          globalY += Math.sin(next[i]);
+        }
+
+        const agreement = Math.hypot(globalX, globalY) / needles.length;
+        shownAgreement += (agreement * 100 - shownAgreement) * Math.min(1, dt * 5);
+        agreementValue.value = `${Math.round(shownAgreement)}%`;
+        agreementValue.textContent = agreementValue.value;
+        return { agreement, direction: Math.atan2(globalY, globalX) };
+      }
+
+      function draw(state, now) {
+        ctx.clearRect(0, 0, width, height);
+        const padX = width / columns;
+        const padY = height / rows;
+        const controlClearance = height < 470 ? 92 : 145;
+        const titleClearance = height < 470 ? 50 : 112;
+        const length = Math.max(8, Math.min(15, Math.min(padX, padY) * .55));
+
+        ctx.lineCap = 'round';
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < columns; x++) {
+            const i = index(x, y);
+            const n = needles[i];
+            const px = (x + .5) * padX + Math.sin(n.phase) * padX * .12;
+            const py = (y + .5) * padY + Math.cos(n.phase * 1.7) * padY * .12;
+            const fadeTop = Math.min(1, Math.max(.12, (py - titleClearance) / 65));
+            const fadeBottom = Math.min(1, Math.max(.08, (height - controlClearance - py) / 60));
+            const alpha = Math.min(fadeTop, fadeBottom);
+            const half = length * .58;
+            const c = Math.cos(n.angle);
+            const s = Math.sin(n.angle);
+
+            ctx.beginPath();
+            ctx.moveTo(px - c * half, py - s * half);
+            ctx.lineTo(px + c * half, py + s * half);
+            ctx.strokeStyle = `rgba(222, 229, 224, ${.26 + alpha * .56})`;
+            ctx.lineWidth = 1.35;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(px + c * half, py + s * half, 1.75, 0, tau);
+            ctx.fillStyle = `rgba(255, 204, 102, ${.18 + alpha * .82})`;
+            ctx.fill();
+          }
+        }
+
+        if (state.agreement > .42) {
+          const pulse = .5 + .5 * Math.sin(now * .002);
+          ctx.save();
+          ctx.translate(width / 2, height / 2);
+          ctx.rotate(state.direction);
+          ctx.globalAlpha = (state.agreement - .42) * .11 * pulse;
+          ctx.fillStyle = '#ffcc66';
+          ctx.fillRect(-width * .36, -1, width * .72, 2);
+          ctx.restore();
+        }
+      }
+
+      function frame(now) {
+        const dt = Math.min(.035, (now - last) / 1000);
+        last = now;
+        const state = update(dt, now);
+        draw(state, now);
+        requestAnimationFrame(frame);
+      }
+
+      function syncSlider() {
+        const value = slider.value;
+        pullValue.value = `${value}%`;
+        pullValue.textContent = pullValue.value;
+        slider.style.setProperty('--fill', `${value}%`);
+      }
+
+      slider.addEventListener('input', syncSlider);
+      addEventListener('resize', resize, { passive: true });
+      syncSlider();
+      resize();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>

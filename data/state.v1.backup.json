@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "orders": [
+    {
+      "id": "order-1789469253775-6e2c51",
+      "concept": "Make a toy showing a pendulum tracing a fading arc. One slider changes gravity.",
+      "reference": "",
+      "createdAt": "2026-09-15T10:47:33.775Z",
+      "attemptIds": [
+        "attempt-1789469253776-e6c71a"
+      ]
+    },
+    {
+      "id": "order-1789469014021-db3add",
+      "concept": "Make a toy showing two overlapping sets of parallel lines. One slider rotates one set relative to the other.",
+      "reference": "",
+      "createdAt": "2026-09-15T10:43:34.021Z",
+      "attemptIds": [
+        "attempt-1789469014022-c39545",
+        "attempt-1789469127122-e14900"
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "id": "candidate-1789469211890-31c90a",
+      "attemptId": "attempt-1789469127122-e14900",
+      "orderId": "order-1789469014021-db3add",
+      "parentCandidateId": "candidate-1789469112624-f8007e",
+      "correction": "Use monochrome black lines on warm paper, and make the moiré interference more pronounced while keeping exactly one slider.",
+      "status": "kept",
+      "createdAt": "2026-09-15T10:46:51.891Z",
+      "path": "/Users/donovan/work/atomic toy factory/data/candidates/candidate-1789469211890-31c90a/index.html",
+      "workerThreadId": "01a0a4ab-f1d8-70a1-9a56-8e8b2acd5228",
+      "model": "gpt-5.6-sol",
+      "updatedAt": "2026-09-15T10:47:16.642Z"
+    },
+    {
+      "id": "candidate-1789469112624-f8007e",
+      "attemptId": "attempt-1789469014022-c39545",
+      "orderId": "order-1789469014021-db3add",
+      "parentCandidateId": null,
+      "correction": "",
+      "status": "candidate",
+      "createdAt": "2026-09-15T10:45:12.624Z",
+      "path": "/Users/donovan/work/atomic toy factory/data/candidates/candidate-1789469112624-f8007e/index.html",
+      "workerThreadId": "01a0a4aa-380b-7ea1-9dd0-5aa8dfd87c0e",
+      "model": "gpt-5.6-sol"
+    }
+  ],
+  "currentCandidateId": "candidate-1789469211890-31c90a"
+}

@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overlap Orbit</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5f1e8;
+      --muted: #aaa8b4;
+      --panel: rgba(19, 20, 32, .76);
+      --line: rgba(255, 255, 255, .11);
+      --overlap: 44%;
+      --front-position: 52.4%;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 22%, rgba(116, 95, 255, .14), transparent 30rem),
+        radial-gradient(circle at 84% 82%, rgba(255, 126, 75, .10), transparent 28rem),
+        #0a0b12;
+    }
+
+    main {
+      width: min(92vw, 760px);
+      min-height: min(88svh, 700px);
+      padding: clamp(22px, 5vw, 46px);
+      display: grid;
+      grid-template-rows: auto minmax(230px, 1fr) auto;
+      gap: clamp(22px, 4vh, 36px);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background: var(--panel);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .42), inset 0 1px rgba(255,255,255,.05);
+      backdrop-filter: blur(18px);
+    }
+
+    header { text-align: center; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.65rem, 5vw, 2.65rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(.86rem, 2.6vw, 1rem);
+    }
+
+    .stage {
+      position: relative;
+      min-height: 230px;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.055), transparent 54%),
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+        rgba(5, 6, 12, .48);
+      background-size: auto, 28px 28px, 28px 28px, auto;
+    }
+
+    .orbit {
+      position: relative;
+      width: min(100%, 470px);
+      height: min(48vw, 250px);
+      min-height: 170px;
+    }
+
+    .body {
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .body.behind {
+      left: 30%;
+      transform: translate(-50%, -50%);
+      background:
+        radial-gradient(circle at 67% 68%, rgba(255,255,255,.24) 0 3%, transparent 3.7%),
+        radial-gradient(circle at 34% 28%, #b8a7ff 0, #7663e5 34%, #3c2b8c 68%, #17142d 100%);
+      box-shadow: inset -20px -18px 36px rgba(10,7,35,.52), 0 0 60px rgba(123,99,231,.28);
+    }
+
+    .body.front {
+      z-index: 2;
+      left: var(--front-position);
+      transform: translate(-50%, -50%);
+      background:
+        radial-gradient(circle at 28% 29%, rgba(255,255,255,.9) 0 3%, transparent 4%),
+        radial-gradient(circle at 35% 32%, #ffdc9c 0, #ff8a58 31%, #cf3e54 65%, #48172f 100%);
+      box-shadow: inset -22px -20px 38px rgba(64,5,34,.48), 0 18px 42px rgba(7,5,15,.56), 0 0 46px rgba(255,105,80,.22);
+      transition: left 70ms linear;
+    }
+
+    .body.front::after {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border-radius: inherit;
+      border: 1px solid rgba(255,255,255,.13);
+      clip-path: inset(0 45% 45% 0);
+    }
+
+    .control {
+      padding: 18px 20px 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .control-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    label { font-weight: 700; font-size: .95rem; }
+
+    output {
+      min-width: 4.6ch;
+      font-variant-numeric: tabular-nums;
+      color: #ffb489;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 34px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: pointer;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #8b6cff 0 var(--overlap), rgba(255,255,255,.13) var(--overlap));
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #8b6cff 0 var(--overlap), rgba(255,255,255,.13) var(--overlap));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 26px;
+      height: 26px;
+      margin-top: -9px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 5px solid #f8f5ee;
+      border-radius: 50%;
+      background: #8b6cff;
+      box-shadow: 0 3px 14px rgba(0,0,0,.48);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 17px;
+      height: 17px;
+      border: 5px solid #f8f5ee;
+      border-radius: 50%;
+      background: #8b6cff;
+      box-shadow: 0 3px 14px rgba(0,0,0,.48);
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px rgba(139,108,255,.32); }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px rgba(139,108,255,.32); }
+
+    @media (max-height: 560px) {
+      main { min-height: calc(100svh - 20px); padding: 18px; gap: 14px; }
+      .stage { min-height: 190px; }
+      header p { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .body.front { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Overlap Orbit</h1>
+      <p>Slide the ember body across the violet one.</p>
+    </header>
+
+    <section class="stage" aria-label="Two circular bodies demonstrating overlap">
+      <div class="orbit" aria-hidden="true">
+        <div class="body behind"></div>
+        <div class="body front"></div>
+      </div>
+    </section>
+
+    <div class="control">
+      <div class="control-row">
+        <label for="overlap">Overlap</label>
+        <output id="readout" for="overlap" aria-live="polite">44%</output>
+      </div>
+      <input id="overlap" type="range" min="0" max="100" value="44" step="1" aria-describedby="readout">
+    </div>
+  </main>
+
+  <script>
+    const slider = document.getElementById('overlap');
+    const readout = document.getElementById('readout');
+
+    function update() {
+      const value = slider.value;
+      document.documentElement.style.setProperty('--overlap', value + '%');
+      document.documentElement.style.setProperty('--front-position', (70 - Number(value) * .4) + '%');
+      readout.value = value + '%';
+    }
+
+    slider.addEventListener('input', update);
+    update();
+  </script>
+</body>
+</html>

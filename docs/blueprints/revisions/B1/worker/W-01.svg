@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">W-01 Toy surface / intuition before explanation</title>
+<desc id="desc">Revision B1 draft. Worker toy construction reference. Not approved or implemented.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#fafbf8}text{font-family:ui-monospace,Menlo,monospace;fill:#203d52}.text{font-size:20px}.note{font-size:18px}.small{font-size:15px}.title{font-size:30px;font-weight:bold}.outline{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#edf3f4;stroke:#203d52;stroke-width:2}.supplied{fill:#f0f1e8;stroke:#203d52;stroke-width:2}.draft{font-size:19px;fill:#93432c;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="outline"/>
+<text x="55" y="70" class="title">ATOMIC FACTORY / W-01 / REV B1</text>
+<text x="55" y="113" class="title">Toy surface / intuition before explanation</text>
+<text x="1090" y="66" class="draft">DRAFT / APPROVAL PENDING</text>
+<text x="1090" y="99" class="small">2026-09-16 / NTS</text>
+<text x="55" y="155" class="note">WORKER CONSTRUCTION REFERENCE / COMPLETE TOY ASSEMBLY</text>
+<rect x="70" y="205" width="850" height="55" class="supplied"/>
+<text x="86" y="238" class="text">00 / IDENTITY — SHORT TITLE + TOY / REVISION ID</text>
+<rect x="70" y="275" width="850" height="415" class="stage"/>
+<text x="86" y="305" class="text">01 / TOY STAGE — VISUAL MECHANIC</text>
+<circle cx="495" cy="475" r="130" class="outline"/>
+<path d="M365 475H625M495 345V605" class="outline"/>
+<text x="335" y="640" class="small">ILLUSTRATIVE GEOMETRY ONLY</text>
+<rect x="70" y="710" width="850" height="105" class="supplied"/>
+<text x="86" y="740" class="text">02 / SUPPLIED PARAMETER SURFACE — DO NOT BUILD</text>
+<path d="M125 780H740" class="outline"/>
+<circle cx="440" cy="780" r="11" fill="#203d52"/>
+<text x="785" y="785" class="small">UNIT</text>
+<text x="970" y="230" class="note">BUILD AREA / 01</text>
+<text x="970" y="257" class="note">One source-grounded relationship.</text>
+<text x="970" y="284" class="note">Visual change reveals its behavior.</text>
+<text x="970" y="311" class="note">No introduction, paragraph or caption</text>
+<text x="970" y="338" class="note">explaining the concept in the stage.</text>
+<text x="970" y="365" class="note">Necessary labels, units and visual</text>
+<text x="970" y="392" class="note">marks are allowed when they aid reading.</text>
+<text x="970" y="419" class="note">They must not tell the learner what</text>
+<text x="970" y="446" class="note">conclusion to reach before exploring.</text>
+<text x="970" y="520" class="note">SUPPLIED SURFACE / 02</text>
+<text x="970" y="547" class="note">One permanent external slider.</text>
+<text x="970" y="574" class="note">Your toy responds to its parameter.</text>
+<text x="970" y="601" class="note">Do not draw a slider or UI substitute.</text>
+<text x="970" y="628" class="note">Report only essential numeric feedback.</text>
+<text x="970" y="655" class="note">The supplied interface positions it.</text>
+<rect x="70" y="830" width="850" height="110" class="supplied"/>
+<text x="86" y="860" class="text">03 / DESCRIPTION + REFERENCES — DETAILS [CLOSED]</text>
+<text x="86" y="887" class="note">Part of this build: deeper analysis, source links + qualifications.</text>
+<text x="86" y="914" class="note">Accessible on request; no explanatory prose in the initial stage.</text>
+<text x="970" y="735" class="note">COMPLETE BUILD / 00–03</text>
+<text x="970" y="762" class="note">Worker supplies identity + description</text>
+<text x="970" y="789" class="note">as well as mechanic + parameter metadata.</text>
+<text x="970" y="816" class="note">Supplied parts place these blocks.</text>
+<text x="970" y="843" class="note">Identity names; it does not prime answers.</text>
+<text x="970" y="870" class="note">Use supplied size; no clipping / overlap.</text>
+<path d="M24 970H1576M1050 970V1076M1350 970V1076" class="outline"/>
+<text x="55" y="1004" class="note">NEW GENERATION / DRAWINGS ARE PROPOSALS, NOT SHIPPED REQUIREMENTS</text>
+<text x="55" y="1031" class="note">Solid boundary • Shaded region: supplied surface • NTS: schematic / not to scale</text>
+<text x="1070" y="1004" class="note">Drawn: Codex</text>
+<text x="1070" y="1031" class="small">Approval: Donovan / pending</text>
+<text x="1370" y="1004" class="note">W-01 / REV B1</text>
+<text x="1370" y="1031" class="note">2026-09-16</text>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">T-03 Interface schematic / isolation and control ports</title>
+<desc id="desc">Atomic Factory toy chassis engineering proposal revision A. Draft, not approved for production. All dimensions in CSS pixels unless noted. Diagram not to scale.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#f8faf9}text{fill:#203d52;font-family:ui-monospace,Menlo,monospace}.label{font-size:20px}.note{font-size:18px}.small{font-size:15px}.heading{font-size:30px;font-weight:700}.box{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#e8f0f3;stroke:#203d52;stroke-width:2}.host{fill:#f1f3ed;stroke:#203d52;stroke-width:2}.line{fill:none;stroke:#203d52;stroke-width:2}.dim{fill:none;stroke:#718b9c;stroke-width:1;stroke-dasharray:5 4}.draft{fill:#9b432f;font-size:20px;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="box"/>
+<text x="55" y="76" class="heading">ATOMIC FACTORY / T-03</text>
+<text x="55" y="116" class="heading">Interface schematic / isolation and control ports</text>
+<text x="1070" y="75" class="draft">DRAFT — NOT FOR PRODUCTION</text>
+<text x="1070" y="108" class="small">REV A / 2026-09-16 / NTS</text>
+<rect x="75" y="220" width="360" height="200" class="host"/>
+<text x="91" y="250" class="label">FACTORY / TRUSTED HOST</text>
+<rect x="555" y="210" width="560" height="350" class="stage"/>
+<text x="571" y="240" class="label">OPAQUE SANDBOX / TOY</text>
+<rect x="1200" y="220" width="300" height="200" class="box"/>
+<text x="1216" y="250" class="label">WORKER ATTEMPT</text>
+<path d="M435 270L555 270" class="line" marker-end="url(#arrow)"/>
+<text x="450" y="250" class="small">HOST → TOY</text>
+<path d="M555 380L435 380" class="line" marker-end="url(#arrow)"/>
+<text x="445" y="405" class="small">TOY → HOST</text>
+<text x="585" y="270" class="note">iframe sandbox = allow-scripts</text>
+<text x="585" y="297" class="note">NO allow-same-origin</text>
+<text x="585" y="324" class="note">Restrictive CSP / no network</text>
+<text x="585" y="351" class="note">Only local validated artifact</text>
+<text x="585" y="378" class="note">Worker cannot write host or saved toys</text>
+<path d="M1200 470L1115 470" class="line" marker-end="url(#arrow)"/>
+<text x="1180" y="452" class="small">VALIDATE + COPY</text>
+<text x="75" y="475" class="note">HOST → TOY / typed envelope</text>
+<text x="75" y="502" class="note">init: protocol, channel, value</text>
+<text x="75" y="529" class="note">parameter: seq, finite value</text>
+<text x="75" y="556" class="note">visibility: active / inactive</text>
+<text x="75" y="583" class="note">viewport: W, H, bounded DPR</text>
+<text x="610" y="605" class="note">TOY → HOST / typed envelope</text>
+<text x="610" y="632" class="note">ready: protocol + parameter declaration</text>
+<text x="610" y="659" class="note">readout: seq + bounded plain text</text>
+<text x="610" y="686" class="note">error: bounded plain text (not executable)</text>
+<text x="75" y="720" class="note">01  Draft protocol AF-TOY/1; each mounted candidate gets a fresh channel nonce.</text>
+<text x="75" y="747" class="note">02  Host verifies event.source === active iframe.contentWindow; opaque origin is expected 'null'.</text>
+<text x="75" y="774" class="note">03  Nonce binds a mount, not a trusted toy identity. Untrusted reports never confer privileges.</text>
+<text x="75" y="801" class="note">04  Validate kind/schema, length, numeric bounds + sequence; reject stale or unknown messages.</text>
+<text x="75" y="828" class="note">05  init to opaque frame requires targetOrigin '*'; send ONLY public toy control data.</text>
+<text x="75" y="855" class="note">06  No paths, auth tokens, commands, HTML injection, fetch proxy or parent-DOM access.</text>
+<text x="75" y="882" class="note">07  Current validator forbids host-window access. Introduce only a reviewed narrow bridge;</text>
+<text x="75" y="909" class="note">    do not broadly permit parent access. Existing candidates remain on legacy integration.</text>
+<path d="M24 970H1576M1040 970V1076M1340 970V1076" class="line"/>
+<text x="55" y="1002" class="note">TOY CHASSIS / NEW GENERATION / PROPOSED ENGINEERING STANDARD</text>
+<text x="55" y="1029" class="note">Units: CSS px • NTS: not to scale • Solid: boundary • Dashed: clearance / dimension</text>
+<text x="1060" y="1002" class="note">Drawn: Codex</text>
+<text x="1060" y="1029" class="note">Approval: PENDING DONOVAN</text>
+<text x="1360" y="1002" class="note">T-03 / REV A</text>
+<text x="1360" y="1029" class="note">Sheet 3 of 5</text>
+</svg>

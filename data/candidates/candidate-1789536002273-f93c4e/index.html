@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Framefall</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f3f7ff;
+      --muted: #8e9bb3;
+      --accent: #7df9ff;
+      --accent-2: #a78bfa;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #05070c;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: stretch;
+      color: var(--ink);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    main {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 43%, rgba(83, 65, 145, .13), transparent 32%),
+        linear-gradient(145deg, #080b14, #030408 70%);
+    }
+
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,.64) 100%);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    header {
+      position: absolute;
+      z-index: 2;
+      top: clamp(20px, 4vw, 42px);
+      left: clamp(20px, 5vw, 56px);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 54px);
+      font-weight: 650;
+      letter-spacing: -.045em;
+      line-height: .92;
+    }
+
+    .control {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: max(22px, env(safe-area-inset-bottom));
+      width: min(440px, calc(100% - 32px));
+      transform: translateX(-50%);
+      padding: 15px 18px 17px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(12, 15, 25, .76);
+      box-shadow: 0 18px 50px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .control-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 11px;
+    }
+
+    label {
+      color: #dbe4f6;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    output {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: ew-resize;
+      touch-action: none;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 5px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) 0 var(--fill), rgba(255,255,255,.14) var(--fill));
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.45);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 5px;
+      border: 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) 0 var(--fill), rgba(255,255,255,.14) var(--fill));
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.45);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 22px;
+      height: 22px;
+      margin-top: -8.5px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 4px solid #101522;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px rgba(125,249,255,.8), 0 0 18px rgba(125,249,255,.58);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: 4px solid #101522;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px rgba(125,249,255,.8), 0 0 18px rgba(125,249,255,.58);
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px #101522, 0 0 0 6px var(--accent); }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px #101522, 0 0 0 6px var(--accent); }
+
+    .hint {
+      position: absolute;
+      z-index: 2;
+      right: clamp(20px, 5vw, 56px);
+      top: clamp(25px, 4.4vw, 47px);
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    @media (max-width: 480px) {
+      .hint { display: none; }
+      .control { padding-inline: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      canvas { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main aria-labelledby="title">
+    <canvas id="tunnel" aria-hidden="true"></canvas>
+    <header>
+      <p class="eyebrow">Perspective study</p>
+      <h1 id="title">Framefall</h1>
+    </header>
+    <p class="hint">Pull the horizon</p>
+
+    <section class="control" aria-label="Tunnel controls">
+      <div class="control-row">
+        <label for="depth">Tunnel depth</label>
+        <output id="depthValue" for="depth" aria-live="polite">18 layers</output>
+      </div>
+      <input id="depth" type="range" min="6" max="30" value="18" step="1" aria-describedby="depthValue">
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('tunnel');
+      const ctx = canvas.getContext('2d');
+      const slider = document.getElementById('depth');
+      const readout = document.getElementById('depthValue');
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let depth = Number(slider.value);
+      let targetDepth = depth;
+      let lastTime = 0;
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+        dpr = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        draw(performance.now());
+      }
+
+      function roundedFrame(x, y, w, h, radius) {
+        const r = Math.min(radius, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+      }
+
+      function draw(time) {
+        if (!width || !height) return;
+        ctx.clearRect(0, 0, width, height);
+
+        const compact = width < 560;
+        const cx = width * .5;
+        const cy = height * (compact ? .43 : .49);
+        const maxW = Math.max(width * 1.12, height * 1.3);
+        const maxH = Math.max(height * .95, width * .67);
+        const drift = reduceMotion ? 0 : Math.sin(time * .00028) * Math.min(width, height) * .008;
+        const layers = Math.max(6, Math.round(depth));
+        const compression = 2.1 + (depth - 6) / 24 * 1.75;
+
+        ctx.save();
+        ctx.translate(drift, -drift * .35);
+
+        for (let i = layers - 1; i >= 0; i--) {
+          const t = i / Math.max(1, layers - 1);
+          const scale = .075 + Math.pow(t, compression) * .98;
+          const w = maxW * scale;
+          const h = maxH * scale;
+          const x = cx - w / 2;
+          const y = cy - h / 2;
+          const hue = 184 + (1 - t) * 70;
+          const alpha = .19 + t * .66;
+          const line = Math.max(.7, 1 + t * 2.4);
+
+          ctx.lineWidth = line;
+          ctx.strokeStyle = `hsla(${hue}, 90%, ${68 + t * 9}%, ${alpha})`;
+          ctx.shadowColor = `hsla(${hue}, 95%, 66%, ${.18 + t * .22})`;
+          ctx.shadowBlur = 7 + t * 15;
+          roundedFrame(x, y, w, h, 7 + 22 * scale);
+          ctx.stroke();
+
+          ctx.shadowBlur = 0;
+          ctx.lineWidth = Math.max(.5, line * .33);
+          ctx.strokeStyle = `rgba(255,255,255,${.08 + t * .15})`;
+          roundedFrame(x + line * .8, y + line * .8, w - line * 1.6, h - line * 1.6, 6 + 21 * scale);
+          ctx.stroke();
+        }
+
+        const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(width, height) * .18);
+        glow.addColorStop(0, 'rgba(167,139,250,.16)');
+        glow.addColorStop(.4, 'rgba(125,249,255,.055)');
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
+
+      function frame(time) {
+        const elapsed = Math.min(32, time - lastTime || 16);
+        lastTime = time;
+        depth += (targetDepth - depth) * Math.min(1, elapsed * .012);
+        draw(time);
+        requestAnimationFrame(frame);
+      }
+
+      function update() {
+        targetDepth = Number(slider.value);
+        readout.textContent = `${slider.value} layers`;
+        const fill = ((targetDepth - Number(slider.min)) / (Number(slider.max) - Number(slider.min))) * 100;
+        slider.style.setProperty('--fill', `${fill}%`);
+      }
+
+      slider.addEventListener('input', update);
+      addEventListener('resize', resize, { passive: true });
+      update();
+      resize();
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>

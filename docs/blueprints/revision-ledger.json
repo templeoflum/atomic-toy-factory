@@ -1,0 +1,90 @@
+[
+  {
+    "path": "revisions/A/T-01.svg",
+    "sha256": "006a31bc49eabb77324e90458e95cc5439413a808b605fc3962582e1a42273d7",
+    "provenance": "snapshot-of-existing-file",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/A/T-02.svg",
+    "sha256": "e24671ebf507cbd0049a637ed7bdbcf5e89a62550a42b028bacd7a9a34df5b87",
+    "provenance": "snapshot-of-existing-file",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/A/T-03.svg",
+    "sha256": "bff70a4c51e51255b9a5f83d74291a09ade543a7c42ca5e2017bf174f6a8f727",
+    "provenance": "snapshot-of-existing-file",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/A/T-04.svg",
+    "sha256": "d6cdd34f1016e45d56bc04d5f81b7bdde4b03bbf3626a4a11810a42ba60f9ebc",
+    "provenance": "snapshot-of-existing-file",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/A/T-05.svg",
+    "sha256": "d8b5766da644d90b65c661eed8cdeec4a50135a77506ee1080c01cfb92d378b6",
+    "provenance": "snapshot-of-existing-file",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/B/factory/F-01.svg",
+    "sha256": "b4879cdd857e2a7dae9c55c51306ea6dbab44c86667dc6d3e131225de39739e0",
+    "provenance": "recovered-from-conversation-content; whitespace/thumbnail corrections may differ",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/B/worker/W-01.svg",
+    "sha256": "5f7f1d3cf1f678b2458669181c851f8c6f1e1497f32de51f7f003fcd527cddb8",
+    "provenance": "recovered-from-conversation-content; whitespace/thumbnail corrections may differ",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/B/worker/W-02.svg",
+    "sha256": "c9c2e1aa688dd47b40bdc488e5b5cbc40fdf8f46ba1d5a0d362d4b983b0a315b",
+    "provenance": "operator-authorized minor in-place alignment: Details; complete toy content; commentary cleanup",
+    "status": "draft",
+    "priorSha256": "a5a01c003402953f3e306f007fdd1fa415dd8607a7407bec96f51a1a1d6ee3b4"
+  },
+  {
+    "path": "revisions/B1/worker/W-01.svg",
+    "sha256": "a1c34335838a53aa3fe03e3ffae8838d3e103f91bfc94a89405e693f95f8a7f8",
+    "provenance": "operator-authorized minor in-place alignment: Details; complete toy content; commentary cleanup",
+    "status": "draft",
+    "priorSha256": "c222bb21915265aada837045dec906a7e0a2490c6492248f5f248ea7962def31"
+  },
+  {
+    "path": "revisions/C/factory/F-01.svg",
+    "sha256": "965e602738c9ac5f098346cdedb7eedc7a58ba9fa3c3803a9cb634229e994fb0",
+    "provenance": "snapshot-of-existing-file",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/D/factory/F-01.svg",
+    "sha256": "ac3e2fdc9ee8381c824190fa0aef730b11ae4594901906dad88fec335bf90924",
+    "provenance": "operator-authorized minor in-place corrections: PASS/FAIL; remove obsolete rebuttal annotations",
+    "status": "draft",
+    "priorSha256": "9311399ee361f85528e2313c3710a1995329ad75efdbe92360e69345e5c80fc9"
+  },
+  {
+    "path": "revisions/D/factory/NOTES.md",
+    "sha256": "0ad5cb86574002c092948664fccf546eb36730090226878de1811981cc01745f",
+    "provenance": "operator-authorized minor in-place corrections: PASS/FAIL; remove obsolete rebuttal annotations",
+    "status": "draft",
+    "priorSha256": "46e3c5a9e4d06d1aaac334195afed76731d224810e5570a67db8bd06c74199cb"
+  },
+  {
+    "path": "revisions/E/factory/F-01.svg",
+    "sha256": "2c3a1513771d3dd5782dfb11380d0ea7bd7dc4970b528a5fd3463c031ef835a9",
+    "provenance": "new-draft",
+    "status": "draft"
+  },
+  {
+    "path": "revisions/E/factory/NOTES.md",
+    "sha256": "24f1052534c15c8fce77e08c49ebe91b03948017a8f05313639d2d2898f536a7",
+    "provenance": "new-draft",
+    "status": "draft"
+  }
+]

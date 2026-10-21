@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spring Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5f6f1;
+      --muted: #a6aca8;
+      --panel: rgba(23, 27, 27, .84);
+      --line: #343c3a;
+      --mint: #70e0b2;
+      --mint-soft: rgba(112, 224, 178, .18);
+      --coral: #ff806c;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-width: 280px;
+      min-height: 360px;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 50% 34%, rgba(56, 90, 76, .22), transparent 34%),
+        #0d1010;
+    }
+
+    main {
+      width: min(100%, 720px);
+      height: 100%;
+      margin: auto;
+      padding: clamp(18px, 4vw, 34px);
+      display: grid;
+      grid-template-rows: auto minmax(190px, 1fr) auto;
+      gap: clamp(14px, 3vh, 24px);
+    }
+
+    header { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 5vw, 38px);
+      line-height: 1;
+      letter-spacing: -.045em;
+      font-weight: 760;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+      text-align: right;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(180deg, #171c1b 0%, #121615 100%);
+      background-size: 28px 28px, 28px 28px, auto;
+      box-shadow: 0 24px 70px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.04);
+      touch-action: none;
+      user-select: none;
+    }
+
+    .beam {
+      position: absolute;
+      top: 24px;
+      left: 14%;
+      right: 14%;
+      height: 15px;
+      border-radius: 5px;
+      background: repeating-linear-gradient(135deg, #d1d7d2 0 8px, #9ba49f 8px 16px);
+      box-shadow: 0 5px 0 #59615e, 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    .mount {
+      position: absolute;
+      top: 38px;
+      left: 50%;
+      width: 18px;
+      height: 12px;
+      transform: translateX(-50%);
+      border-radius: 0 0 9px 9px;
+      background: #c9d0cb;
+    }
+
+    svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    #springGlow { fill: none; stroke: rgba(112,224,178,.2); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+    #spring { fill: none; stroke: var(--mint); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+    #guide { stroke: rgba(255,255,255,.1); stroke-width: 1; stroke-dasharray: 4 7; }
+
+    .weight {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: clamp(76px, 18vw, 104px);
+      height: clamp(62px, 13vw, 76px);
+      transform: translate(-50%, 0);
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 15px;
+      color: #2a120d;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      background: linear-gradient(145deg, #ff9986, var(--coral));
+      box-shadow: inset 0 1px rgba(255,255,255,.55), 0 14px 28px rgba(0,0,0,.4), 0 0 0 6px rgba(255,128,108,.06);
+      cursor: grab;
+      touch-action: none;
+      outline: none;
+    }
+
+    .weight::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      width: 22px;
+      height: 8px;
+      border-radius: 6px 6px 0 0;
+      background: #a7483a;
+    }
+
+    .weight:active, .weight.dragging { cursor: grabbing; }
+    .weight:focus-visible { box-shadow: inset 0 1px rgba(255,255,255,.55), 0 0 0 4px #fff, 0 0 0 8px var(--coral); }
+
+    .shadow {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      width: 120px;
+      height: 18px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: rgba(0,0,0,.42);
+      filter: blur(5px);
+    }
+
+    .controls {
+      padding: 17px 18px 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 14px 40px rgba(0,0,0,.22);
+    }
+
+    .control-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 13px; }
+    label { font-size: 14px; font-weight: 700; letter-spacing: .01em; }
+
+    output {
+      color: var(--mint);
+      font-variant-numeric: tabular-nums;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 7px;
+      border-radius: 9px;
+      background: linear-gradient(90deg, var(--mint) var(--fill), #39413f var(--fill));
+    }
+
+    input[type="range"]::-moz-range-track { height: 7px; border-radius: 9px; background: #39413f; }
+    input[type="range"]::-moz-range-progress { height: 7px; border-radius: 9px; background: var(--mint); }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 26px;
+      height: 26px;
+      margin-top: -9.5px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 3px solid #121615;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 0 1px var(--mint), 0 4px 12px rgba(0,0,0,.38);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 21px;
+      height: 21px;
+      border: 3px solid #121615;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 0 1px var(--mint), 0 4px 12px rgba(0,0,0,.38);
+    }
+
+    input[type="range"]:focus-visible { outline: 2px solid white; outline-offset: 4px; border-radius: 10px; }
+
+    .scale { display: flex; justify-content: space-between; margin-top: 4px; color: var(--muted); font-size: 11px; }
+
+    @media (max-height: 580px) {
+      main { grid-template-rows: auto minmax(180px, 1fr) auto; padding-block: 14px; gap: 10px; }
+      .controls { padding-block: 10px; }
+      .control-head { margin-bottom: 5px; }
+      .hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Spring Lab</h1>
+      <p class="hint">Pull the weight, then let go</p>
+    </header>
+
+    <section class="stage" id="stage" aria-label="Animated weight hanging from a spring">
+      <div class="beam" aria-hidden="true"></div>
+      <div class="mount" aria-hidden="true"></div>
+      <div class="shadow" id="shadow" aria-hidden="true"></div>
+      <svg id="drawing" aria-hidden="true">
+        <line id="guide" x1="50%" x2="50%" y1="50" y2="100%"></line>
+        <polyline id="springGlow"></polyline>
+        <polyline id="spring"></polyline>
+      </svg>
+      <div class="weight" id="weight" role="img" aria-label="One kilogram weight. Drag vertically to stretch the spring." tabindex="0">1 KG</div>
+    </section>
+
+    <section class="controls" aria-label="Spring controls">
+      <div class="control-head">
+        <label for="stiffness">Spring stiffness</label>
+        <output id="readout" for="stiffness" aria-live="polite">70 N/m</output>
+      </div>
+      <input id="stiffness" type="range" min="20" max="140" step="1" value="70" aria-valuetext="70 newtons per meter">
+      <div class="scale" aria-hidden="true"><span>SOFT</span><span>STIFF</span></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const stage = document.getElementById('stage');
+      const weight = document.getElementById('weight');
+      const spring = document.getElementById('spring');
+      const springGlow = document.getElementById('springGlow');
+      const shadow = document.getElementById('shadow');
+      const slider = document.getElementById('stiffness');
+      const readout = document.getElementById('readout');
+
+      const mass = 1;
+      const gravity = 9.81;
+      const damping = 1.45;
+      const restLength = 0.34;
+      let extension = gravity / Number(slider.value);
+      let velocity = 0;
+      let dragging = false;
+      let lastTime = performance.now();
+      let lastDragY = 0;
+      let lastDragTime = lastTime;
+
+      function geometry() {
+        const h = stage.clientHeight;
+        return {
+          top: 50,
+          scale: Math.min(330, Math.max(175, h * .72)),
+          weightH: weight.offsetHeight,
+          minY: 92,
+          maxY: h - weight.offsetHeight - 13
+        };
+      }
+
+      function positionY() {
+        const g = geometry();
+        return Math.max(g.minY, Math.min(g.maxY, g.top + (restLength + extension) * g.scale));
+      }
+
+      function draw() {
+        const w = stage.clientWidth;
+        const x = w / 2;
+        const startY = 50;
+        const endY = positionY();
+        const lead = 9;
+        const turns = 11;
+        const amp = Math.min(28, Math.max(18, w * .055));
+        const coilStart = startY + lead;
+        const coilEnd = Math.max(coilStart + 20, endY - lead);
+        const points = [[x, startY], [x, coilStart]];
+
+        for (let i = 1; i <= turns * 2; i++) {
+          const p = i / (turns * 2 + 1);
+          points.push([x + (i % 2 ? amp : -amp), coilStart + p * (coilEnd - coilStart)]);
+        }
+        points.push([x, coilEnd], [x, endY]);
+        const value = points.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+        spring.setAttribute('points', value);
+        springGlow.setAttribute('points', value);
+        weight.style.transform = `translate(-50%, ${endY}px)`;
+
+        const g = geometry();
+        const gap = Math.max(0, g.maxY - endY);
+        const shadowScale = .68 + Math.max(0, 1 - gap / Math.max(1, g.maxY)) * .34;
+        shadow.style.transform = `translateX(-50%) scale(${shadowScale})`;
+        shadow.style.opacity = String(Math.max(.18, .55 - gap / 650));
+      }
+
+      function tick(now) {
+        const dt = Math.min(.025, (now - lastTime) / 1000 || .016);
+        lastTime = now;
+        if (!dragging) {
+          const k = Number(slider.value);
+          const acceleration = gravity - (k / mass) * extension - (damping / mass) * velocity;
+          velocity += acceleration * dt;
+          extension += velocity * dt;
+          const g = geometry();
+          const minExt = (g.minY - g.top) / g.scale - restLength;
+          const maxExt = (g.maxY - g.top) / g.scale - restLength;
+          if (extension < minExt) { extension = minExt; velocity *= -.28; }
+          if (extension > maxExt) { extension = maxExt; velocity *= -.28; }
+        }
+        draw();
+        requestAnimationFrame(tick);
+      }
+
+      function setFromPointer(event) {
+        const rect = stage.getBoundingClientRect();
+        const g = geometry();
+        const y = Math.max(g.minY, Math.min(g.maxY, event.clientY - rect.top - weight.offsetHeight / 2));
+        const now = performance.now();
+        const nextExtension = (y - g.top) / g.scale - restLength;
+        const dt = Math.max(.008, (now - lastDragTime) / 1000);
+        velocity = Math.max(-2.8, Math.min(2.8, (nextExtension - extension) / dt));
+        extension = nextExtension;
+        lastDragY = y;
+        lastDragTime = now;
+      }
+
+      weight.addEventListener('pointerdown', event => {
+        dragging = true;
+        velocity = 0;
+        lastDragTime = performance.now();
+        lastDragY = positionY();
+        weight.classList.add('dragging');
+        weight.setPointerCapture(event.pointerId);
+        setFromPointer(event);
+      });
+
+      weight.addEventListener('pointermove', event => {
+        if (dragging) setFromPointer(event);
+      });
+
+      function release(event) {
+        if (!dragging) return;
+        dragging = false;
+        weight.classList.remove('dragging');
+        if (weight.hasPointerCapture(event.pointerId)) weight.releasePointerCapture(event.pointerId);
+      }
+
+      weight.addEventListener('pointerup', release);
+      weight.addEventListener('pointercancel', release);
+
+      slider.addEventListener('input', () => {
+        const k = Number(slider.value);
+        const fill = ((k - Number(slider.min)) / (Number(slider.max) - Number(slider.min))) * 100;
+        slider.style.setProperty('--fill', `${fill}%`);
+        slider.setAttribute('aria-valuetext', `${k} newtons per meter`);
+        readout.value = `${k} N/m`;
+        readout.textContent = `${k} N/m`;
+      });
+
+      slider.dispatchEvent(new Event('input'));
+      addEventListener('resize', draw);
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">T-02 Adaptive geometry / composition and movement</title>
+<desc id="desc">Atomic Factory toy chassis engineering proposal revision A. Draft, not approved for production. All dimensions in CSS pixels unless noted. Diagram not to scale.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#f8faf9}text{fill:#203d52;font-family:ui-monospace,Menlo,monospace}.label{font-size:20px}.note{font-size:18px}.small{font-size:15px}.heading{font-size:30px;font-weight:700}.box{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#e8f0f3;stroke:#203d52;stroke-width:2}.host{fill:#f1f3ed;stroke:#203d52;stroke-width:2}.line{fill:none;stroke:#203d52;stroke-width:2}.dim{fill:none;stroke:#718b9c;stroke-width:1;stroke-dasharray:5 4}.draft{fill:#9b432f;font-size:20px;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="box"/>
+<text x="55" y="76" class="heading">ATOMIC FACTORY / T-02</text>
+<text x="55" y="116" class="heading">Adaptive geometry / composition and movement</text>
+<text x="1070" y="75" class="draft">DRAFT — NOT FOR PRODUCTION</text>
+<text x="1070" y="108" class="small">REV A / 2026-09-16 / NTS</text>
+<text x="75" y="185" class="label">WIDE / ROW WHEN MINIMUM CELLS FIT</text>
+<rect x="75" y="210" width="270" height="355" class="host"/>
+<text x="91" y="240" class="label">ORDER</text>
+<rect x="361" y="210" width="500" height="260" class="stage"/>
+<text x="377" y="240" class="label">STAGE</text>
+<rect x="361" y="486" width="500" height="79" class="host"/>
+<text x="377" y="516" class="label">DOCK</text>
+<rect x="877" y="210" width="220" height="355" class="host"/>
+<text x="893" y="240" class="label">HISTORY</text>
+<text x="1150" y="185" class="label">COMPACT / STACK</text>
+<rect x="1150" y="210" width="350" height="65" class="host"/>
+<text x="1166" y="240" class="label">ORDER / COLLAPSIBLE</text>
+<rect x="1150" y="291" width="350" height="195" class="stage"/>
+<text x="1166" y="321" class="label">STAGE</text>
+<rect x="1150" y="502" width="350" height="90" class="host"/>
+<text x="1166" y="532" class="label">DOCK</text>
+<rect x="1150" y="608" width="350" height="65" class="host"/>
+<text x="1166" y="638" class="label">HISTORY / ACCESS</text>
+<path d="M75 590L1097 590" class="dim"/>
+<text x="594" y="582" class="small">W &gt;= Mo + Mp + Mh + 2g (not a fixed breakpoint)</text>
+<text x="75" y="650" class="note">01  g = 16 proposed; compact g = 12. Widths are schematic, not literal output px.</text>
+<text x="75" y="677" class="note">02  Select topology by measured useful cell minima; preserve selection and navigation origin.</text>
+<text x="75" y="704" class="note">03  Stage W = available cell width. H = available stage allocation; no mandatory aspect ratio.</text>
+<text x="75" y="731" class="note">04  Uniform world fit: s = min((W - 2p)/Bw, (H - 2p)/Bh); center remaining space.</text>
+<text x="75" y="758" class="note">05  p &gt;= 12 proposed for essential geometry; stroke/label extents count inside bounds.</text>
+<text x="75" y="785" class="note">06  Recompose labels when needed; never anisotropically stretch meaningful geometry.</text>
+<text x="75" y="812" class="note">07  Resize preserves parameter + simulation state; repaint from new measured geometry.</text>
+<text x="75" y="839" class="note">08  Host owns document scrolling. Stage has no hidden offscreen controls or internal page scroll.</text>
+<text x="75" y="866" class="note">09  Below a tested useful minimum, show an explicit size notice; do not pretend unlimited fit.</text>
+<text x="1150" y="735" class="note">TALL / NARROW</text>
+<text x="1150" y="762" class="note">Give stage more H only when</text>
+<text x="1150" y="789" class="note">useful to the mechanic.</text>
+<text x="1150" y="816" class="note">Keep dock a real layout cell.</text>
+<text x="1150" y="843" class="note">No floating overlap rules.</text>
+<path d="M24 970H1576M1040 970V1076M1340 970V1076" class="line"/>
+<text x="55" y="1002" class="note">TOY CHASSIS / NEW GENERATION / PROPOSED ENGINEERING STANDARD</text>
+<text x="55" y="1029" class="note">Units: CSS px • NTS: not to scale • Solid: boundary • Dashed: clearance / dimension</text>
+<text x="1060" y="1002" class="note">Drawn: Codex</text>
+<text x="1060" y="1029" class="note">Approval: PENDING DONOVAN</text>
+<text x="1360" y="1002" class="note">T-02 / REV A</text>
+<text x="1360" y="1029" class="note">Sheet 2 of 5</text>
+</svg>

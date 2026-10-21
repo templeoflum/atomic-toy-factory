@@ -1,0 +1,14 @@
+{
+  "name": "atomic-factory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A bounded local factory for one-slider atomic toys",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "test:browser": "node --test test-browser/flow.browser.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

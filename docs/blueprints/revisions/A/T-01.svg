@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">T-01 General arrangement / ownership and clearances</title>
+<desc id="desc">Atomic Factory toy chassis engineering proposal revision A. Draft, not approved for production. All dimensions in CSS pixels unless noted. Diagram not to scale.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#f8faf9}text{fill:#203d52;font-family:ui-monospace,Menlo,monospace}.label{font-size:20px}.note{font-size:18px}.small{font-size:15px}.heading{font-size:30px;font-weight:700}.box{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#e8f0f3;stroke:#203d52;stroke-width:2}.host{fill:#f1f3ed;stroke:#203d52;stroke-width:2}.line{fill:none;stroke:#203d52;stroke-width:2}.dim{fill:none;stroke:#718b9c;stroke-width:1;stroke-dasharray:5 4}.draft{fill:#9b432f;font-size:20px;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="box"/>
+<text x="55" y="76" class="heading">ATOMIC FACTORY / T-01</text>
+<text x="55" y="116" class="heading">General arrangement / ownership and clearances</text>
+<text x="1070" y="75" class="draft">DRAFT — NOT FOR PRODUCTION</text>
+<text x="1070" y="108" class="small">REV A / 2026-09-16 / NTS</text>
+<rect x="90" y="180" width="880" height="720" class="host"/>
+<text x="106" y="210" class="label">REVIEW CELL / FACTORY-OWNED CONTAINER</text>
+<rect x="120" y="235" width="820" height="65" class="box"/>
+<text x="136" y="265" class="label">A / IDENTITY: title + version + reference revision</text>
+<rect x="120" y="320" width="820" height="390" class="stage"/>
+<text x="136" y="350" class="label">B / ISOLATED TOY STAGE</text>
+<circle cx="530" cy="515" r="110" class="dim"/>
+<text x="395" y="520" class="label">MECHANIC ONLY</text>
+<rect x="120" y="730" width="820" height="80" class="host"/>
+<text x="136" y="760" class="label">C / PERMANENT PARAMETER DOCK</text>
+<path d="M160 785L760 785" class="line"/>
+<circle cx="470" cy="785" r="10" fill="#203d52"/>
+<text x="795" y="786" class="small">VALUE</text>
+<rect x="120" y="830" width="820" height="45" class="box"/>
+<text x="136" y="860" class="label">D / DISPOSITION + EXPLANATION / REFERENCES</text>
+<path d="M980 320L980 710" class="dim"/>
+<text x="988" y="507" class="small">Hstage</text>
+<path d="M120 310L940 310" class="dim"/>
+<text x="538" y="302" class="small">Wstage</text>
+<text x="1035" y="215" class="note">01  Host owns A, C, D.</text>
+<text x="1035" y="242" class="note">02  Toy owns drawing + simulation in B.</text>
+<text x="1035" y="269" class="note">03  No controls painted into B.</text>
+<text x="1035" y="296" class="note">04  Identity / controls stay outside</text>
+<text x="1035" y="323" class="note">    the sandbox and its clipping.</text>
+<text x="1035" y="350" class="note">05  C reserves &gt;= 88 px including</text>
+<text x="1035" y="377" class="note">    label, slider, units + readout.</text>
+<text x="1035" y="404" class="note">06  Interactive target &gt;= 44 × 44.</text>
+<text x="1035" y="431" class="note">07  Proposed gaps: 16 normal / 12 compact.</text>
+<text x="1035" y="458" class="note">08  D is schematic: explanation expands</text>
+<text x="1035" y="485" class="note">    separately from action buttons.</text>
+<text x="1035" y="570" class="note">DESIGN LIMIT</text>
+<text x="1035" y="597" class="note">At arbitrarily tiny windows, content</text>
+<text x="1035" y="624" class="note">cannot remain legible and all visible.</text>
+<text x="1035" y="651" class="note">Use host page scrolling, not overlap</text>
+<text x="1035" y="678" class="note">or scaled-down controls. Permanent</text>
+<text x="1035" y="705" class="note">means host-owned, not always sticky.</text>
+<text x="1035" y="770" class="note">Shading identifies ownership only;</text>
+<text x="1035" y="797" class="note">it does not prescribe toy aesthetics.</text>
+<text x="1035" y="824" class="note">88 px dock is a proposed minimum;</text>
+<text x="1035" y="851" class="note">long/localized readouts may grow.</text>
+<path d="M24 970H1576M1040 970V1076M1340 970V1076" class="line"/>
+<text x="55" y="1002" class="note">TOY CHASSIS / NEW GENERATION / PROPOSED ENGINEERING STANDARD</text>
+<text x="55" y="1029" class="note">Units: CSS px • NTS: not to scale • Solid: boundary • Dashed: clearance / dimension</text>
+<text x="1060" y="1002" class="note">Drawn: Codex</text>
+<text x="1060" y="1029" class="note">Approval: PENDING DONOVAN</text>
+<text x="1360" y="1002" class="note">T-01 / REV A</text>
+<text x="1360" y="1029" class="note">Sheet 1 of 5</text>
+</svg>

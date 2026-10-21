@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opposite Hues</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --hue: 24;
+      --opposite: 204;
+      --ink: hsl(var(--hue) 88% 57%);
+      --opposite-ink: hsl(var(--opposite) 88% 57%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-width: 280px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: #f7f7fb;
+      background:
+        radial-gradient(circle at 50% 15%, #272733 0, #131318 48%, #09090c 100%);
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+    }
+
+    main {
+      width: min(94vw, 760px);
+      height: min(92vh, 760px);
+      min-height: 470px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: clamp(16px, 3vh, 28px);
+      padding: clamp(20px, 4vw, 38px);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: clamp(24px, 5vw, 40px);
+      background: rgba(22, 22, 28, .82);
+      box-shadow: 0 30px 80px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.06);
+      backdrop-filter: blur(12px);
+    }
+
+    header { text-align: center; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.65rem, 5vw, 2.5rem);
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    header p {
+      margin: 9px 0 0;
+      color: #a8a8b2;
+      font-size: clamp(.85rem, 2.5vw, 1rem);
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      border-radius: clamp(22px, 4vw, 34px);
+      isolation: isolate;
+      box-shadow: 0 18px 44px rgba(0,0,0,.35);
+    }
+
+    .field {
+      display: grid;
+      place-items: center;
+      transition: background-color 80ms linear;
+    }
+
+    .field:first-child { background: var(--ink); }
+    .field:last-child { background: var(--opposite-ink); }
+
+    .orb {
+      width: clamp(92px, 26vw, 168px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--opposite-ink);
+      transition: background-color 80ms linear, transform 180ms ease;
+      box-shadow: 0 16px 34px rgba(0,0,0,.18), inset 0 2px 2px rgba(255,255,255,.18);
+    }
+
+    .field:last-child .orb { background: var(--ink); }
+
+    .stage::after {
+      content: "180° APART";
+      position: absolute;
+      inset: 50% auto auto 50%;
+      z-index: 2;
+      padding: 8px 11px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      color: white;
+      background: rgba(15,15,19,.7);
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      font-size: clamp(.58rem, 1.7vw, .72rem);
+      font-weight: 800;
+      letter-spacing: .12em;
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+      backdrop-filter: blur(8px);
+    }
+
+    .controls { display: grid; gap: 12px; }
+
+    .readout {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    label {
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #bdbdc6;
+    }
+
+    output {
+      color: white;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.05rem;
+      font-weight: 750;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 34px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 12px;
+      border: 2px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: linear-gradient(to right,
+        hsl(0 88% 57%), hsl(60 88% 57%), hsl(120 88% 57%),
+        hsl(180 88% 57%), hsl(240 88% 57%), hsl(300 88% 57%), hsl(360 88% 57%));
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      border: 2px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      background: linear-gradient(to right,
+        hsl(0 88% 57%), hsl(60 88% 57%), hsl(120 88% 57%),
+        hsl(180 88% 57%), hsl(240 88% 57%), hsl(300 88% 57%), hsl(360 88% 57%));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 30px;
+      height: 30px;
+      margin-top: -11px;
+      appearance: none;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 3px 12px rgba(0,0,0,.5);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 3px 12px rgba(0,0,0,.5);
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px #101014, 0 0 0 8px white; }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px #101014, 0 0 0 8px white; }
+
+    .legend {
+      display: flex;
+      justify-content: space-between;
+      color: #8f8f99;
+      font-size: .76rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-height: 560px) {
+      main { height: 96vh; min-height: 0; gap: 12px; padding: 16px; }
+      header p { display: none; }
+      .orb { width: min(20vh, 110px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .field, .orb { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Opposite Hues</h1>
+      <p>Every hue has a perfect counterpoint across the wheel.</p>
+    </header>
+
+    <section class="stage" aria-label="Foreground hue and its complementary color">
+      <div class="field"><div class="orb" aria-hidden="true"></div></div>
+      <div class="field"><div class="orb" aria-hidden="true"></div></div>
+    </section>
+
+    <div class="controls">
+      <div class="readout">
+        <label for="hue">Foreground hue</label>
+        <output id="value" for="hue" aria-live="polite">24° · complement 204°</output>
+      </div>
+      <input id="hue" type="range" min="0" max="359" value="24" step="1"
+             aria-label="Rotate foreground hue around the color wheel">
+      <div class="legend" aria-hidden="true"><span>0°</span><span>180°</span><span>359°</span></div>
+    </div>
+  </main>
+
+  <script>
+    const slider = document.querySelector('#hue');
+    const value = document.querySelector('#value');
+
+    function paint() {
+      const hue = Number(slider.value);
+      const opposite = (hue + 180) % 360;
+      document.documentElement.style.setProperty('--hue', hue);
+      document.documentElement.style.setProperty('--opposite', opposite);
+      value.textContent = `${hue}° · complement ${opposite}°`;
+      slider.setAttribute('aria-valuetext', `${hue} degrees; complement ${opposite} degrees`);
+    }
+
+    slider.addEventListener('input', paint);
+    paint();
+  </script>
+</body>
+</html>

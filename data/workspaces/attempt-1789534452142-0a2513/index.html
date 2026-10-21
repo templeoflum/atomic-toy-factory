@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bend the Line</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8f4e8;
+      --muted: #9ea8b8;
+      --panel: rgba(13, 22, 37, 0.82);
+      --edge: rgba(255, 255, 255, 0.11);
+      --accent: #ffc857;
+      --accent-hot: #ff8f5c;
+      --track: #2b374a;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      overflow: auto;
+      padding: clamp(16px, 4vw, 40px);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% 10%, rgba(58, 91, 137, 0.28), transparent 42%),
+        linear-gradient(145deg, #08101d, #0c1728 52%, #09111e);
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+    }
+
+    main {
+      width: min(760px, 100%);
+      border: 1px solid var(--edge);
+      border-radius: clamp(22px, 4vw, 34px);
+      padding: clamp(22px, 5vw, 46px);
+      background: var(--panel);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(18px);
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: clamp(20px, 4vw, 34px);
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.045em;
+    }
+
+    .readout {
+      min-width: 92px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 200, 87, 0.24);
+      border-radius: 14px;
+      background: rgba(255, 200, 87, 0.08);
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
+
+    .readout strong {
+      display: block;
+      font-size: 1.25rem;
+      line-height: 1.1;
+    }
+
+    .readout span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .stage {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      min-height: 180px;
+      max-height: 340px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        radial-gradient(circle at 50% 65%, rgba(255, 200, 87, 0.09), transparent 45%),
+        #091321;
+      background-size: 30px 30px, 30px 30px, auto, auto;
+    }
+
+    svg { width: 100%; height: 100%; display: block; }
+
+    .baseline {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.13);
+      stroke-width: 2;
+      stroke-dasharray: 6 9;
+    }
+
+    .wire-glow, .wire {
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .wire-glow {
+      stroke: var(--accent);
+      stroke-width: 18;
+      opacity: 0.13;
+      filter: blur(6px);
+    }
+
+    .wire {
+      stroke: url(#wireGradient);
+      stroke-width: 7;
+    }
+
+    .anchor-ring { fill: #0b1524; stroke: var(--accent); stroke-width: 3; }
+    .anchor-core { fill: var(--accent); }
+    .center-mark { fill: var(--accent-hot); filter: drop-shadow(0 0 7px rgba(255,143,92,.8)); }
+
+    .controls { margin-top: clamp(24px, 4vw, 36px); }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 750;
+    }
+
+    .control-label small {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 44px;
+      margin: 0;
+      padding: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      background: transparent;
+      touch-action: pan-x;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) 0 var(--fill), var(--track) var(--fill) 100%);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      border-radius: 99px;
+      background: var(--track);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 8px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 30px;
+      height: 30px;
+      margin-top: -11px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 5px solid #fff7e2;
+      border-radius: 50%;
+      background: var(--accent-hot);
+      box-shadow: 0 4px 16px rgba(0,0,0,.35), 0 0 0 5px rgba(255,200,87,.12);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border: 5px solid #fff7e2;
+      border-radius: 50%;
+      background: var(--accent-hot);
+      box-shadow: 0 4px 16px rgba(0,0,0,.35), 0 0 0 5px rgba(255,200,87,.12);
+    }
+
+    input[type="range"]:focus-visible {
+      outline: 3px solid rgba(255, 200, 87, 0.5);
+      outline-offset: 4px;
+      border-radius: 12px;
+    }
+
+    .hint {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.77rem;
+      text-align: center;
+    }
+
+    @media (max-width: 440px) {
+      header { align-items: center; }
+      .readout { min-width: 76px; padding: 8px 10px; }
+      .stage { aspect-ratio: 1.55 / 1; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .center-mark { transition: cx 80ms linear, cy 80ms linear; }
+    }
+  </style>
+</head>
+<body>
+  <main aria-labelledby="title">
+    <header>
+      <div>
+        <p class="eyebrow">Shape study</p>
+        <h1 id="title">Bend the Line</h1>
+      </div>
+      <output class="readout" id="readout" for="bend" aria-live="polite">
+        <strong>50%</strong><span>bend</span>
+      </output>
+    </header>
+
+    <section class="stage" aria-label="A line bending upward between two fixed points">
+      <svg viewBox="0 0 600 300" role="img" aria-labelledby="visual-title visual-desc" preserveAspectRatio="xMidYMid meet">
+        <title id="visual-title">Bending line</title>
+        <desc id="visual-desc">A flexible line bends upward as bend strength increases.</desc>
+        <defs>
+          <linearGradient id="wireGradient" x1="0" x2="1">
+            <stop offset="0" stop-color="#ffd778"/>
+            <stop offset=".5" stop-color="#ff8f5c"/>
+            <stop offset="1" stop-color="#ffd778"/>
+          </linearGradient>
+        </defs>
+        <path class="baseline" d="M 55 220 L 545 220"/>
+        <path class="wire-glow" id="wireGlow" d="M 55 220 Q 300 110 545 220"/>
+        <path class="wire" id="wire" d="M 55 220 Q 300 110 545 220"/>
+        <circle class="center-mark" id="centerMark" cx="300" cy="165" r="6"/>
+        <g aria-hidden="true">
+          <circle class="anchor-ring" cx="55" cy="220" r="12"/>
+          <circle class="anchor-core" cx="55" cy="220" r="4"/>
+          <circle class="anchor-ring" cx="545" cy="220" r="12"/>
+          <circle class="anchor-core" cx="545" cy="220" r="4"/>
+        </g>
+      </svg>
+    </section>
+
+    <div class="controls">
+      <label class="control-label" for="bend">
+        <span>Bend strength</span>
+        <small>straight → curved</small>
+      </label>
+      <input id="bend" type="range" min="0" max="100" value="50" step="1" aria-describedby="hint">
+      <p class="hint" id="hint">Drag the slider to flex the line.</p>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const slider = document.getElementById('bend');
+      const wire = document.getElementById('wire');
+      const glow = document.getElementById('wireGlow');
+      const centerMark = document.getElementById('centerMark');
+      const readout = document.querySelector('#readout strong');
+      const visualDesc = document.getElementById('visual-desc');
+
+      function update() {
+        const strength = Number(slider.value);
+        const controlY = 220 - strength * 2.2;
+        const midpointY = (220 + controlY) / 2;
+        const path = `M 55 220 Q 300 ${controlY} 545 220`;
+
+        wire.setAttribute('d', path);
+        glow.setAttribute('d', path);
+        centerMark.setAttribute('cy', midpointY);
+        readout.textContent = `${strength}%`;
+        slider.style.setProperty('--fill', `${strength}%`);
+        visualDesc.textContent = strength === 0
+          ? 'A straight line connects two fixed points.'
+          : `A line bends upward between two fixed points at ${strength} percent strength.`;
+      }
+
+      slider.addEventListener('input', update);
+      update();
+    })();
+  </script>
+</body>
+</html>

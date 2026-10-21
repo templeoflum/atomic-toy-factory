@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Line Drift</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f2f0e9;
+      --muted: #aaa9a3;
+      --panel: rgba(25, 25, 27, 0.82);
+      --edge: rgba(255, 255, 255, 0.10);
+      --cyan: #79e7ef;
+      --coral: #ff9279;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 37%, #28282b 0, #18181a 48%, #101012 100%);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: clamp(10px, 2vh, 22px);
+      width: min(100%, 920px);
+      margin: 0 auto;
+      padding: clamp(20px, 4vw, 42px);
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 4vw, 2.2rem);
+      line-height: 1;
+      letter-spacing: -0.045em;
+      font-weight: 640;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .legend {
+      display: flex;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 15px;
+      height: 2px;
+      margin-right: 6px;
+      border-radius: 2px;
+      vertical-align: 0.22em;
+      background: var(--cyan);
+    }
+
+    .legend .moving::before { background: var(--coral); }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      isolation: isolate;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 5% 13%;
+      z-index: -1;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.25);
+      filter: blur(34px);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+    }
+
+    .controls {
+      padding: clamp(16px, 3vw, 22px) clamp(18px, 3.5vw, 28px) clamp(18px, 3.5vw, 26px);
+      border: 1px solid var(--edge);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28), inset 0 1px rgba(255, 255, 255, 0.035);
+      backdrop-filter: blur(14px);
+    }
+
+    .control-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 13px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+    }
+
+    output {
+      color: var(--coral);
+      font-variant-numeric: tabular-nums;
+      font-size: 1.2rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 34px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      cursor: ew-resize;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--cyan), #e7e4de 50%, var(--coral));
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 4px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--cyan), #e7e4de 50%, var(--coral));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 24px;
+      height: 24px;
+      margin-top: -10px;
+      appearance: none;
+      border: 3px solid #202023;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.55);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #202023;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 4px 12px rgba(0,0,0,.55);
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(121,231,239,.28); }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(121,231,239,.28); }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1px;
+      color: #77777b;
+      font-size: 0.64rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-height: 520px) {
+      main { padding-block: 14px; gap: 8px; }
+      .eyebrow { display: none; }
+      .controls { padding-block: 10px 12px; }
+      .control-head { margin-bottom: 4px; }
+      canvas { min-height: 130px; }
+    }
+
+    @media (max-width: 440px) {
+      .legend { display: none; }
+      main { padding-inline: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">Moiré study</p>
+        <h1>Line Drift</h1>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span>fixed</span><span class="moving">rotating</span>
+      </div>
+    </header>
+
+    <section class="stage" aria-label="Two overlapping fields of parallel lines">
+      <canvas id="moire" role="img" aria-label="A cyan field of fixed parallel lines overlapped by a coral field of rotating parallel lines"></canvas>
+    </section>
+
+    <section class="controls" aria-label="Angle control">
+      <div class="control-head">
+        <label for="angle">Relative angle</label>
+        <output id="readout" for="angle" aria-live="polite">12°</output>
+      </div>
+      <input id="angle" type="range" min="-45" max="45" value="12" step="1" aria-valuetext="12 degrees">
+      <div class="scale" aria-hidden="true"><span>−45°</span><span>0°</span><span>45°</span></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('moire');
+      const ctx = canvas.getContext('2d');
+      const slider = document.getElementById('angle');
+      const readout = document.getElementById('readout');
+      let cssWidth = 0;
+      let cssHeight = 0;
+      let angle = Number(slider.value);
+
+      function fitCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        cssWidth = Math.max(1, rect.width);
+        cssHeight = Math.max(1, rect.height);
+        canvas.width = Math.round(cssWidth * dpr);
+        canvas.height = Math.round(cssHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        draw();
+      }
+
+      function lineField(rotation, color) {
+        const radius = Math.min(cssWidth * 0.39, cssHeight * 0.44);
+        const extent = radius * 1.48;
+        const gap = Math.max(8, Math.min(13, radius / 25));
+
+        ctx.save();
+        ctx.translate(cssWidth / 2, cssHeight / 2);
+        ctx.rotate(rotation * Math.PI / 180);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(1, Math.min(1.7, radius / 190));
+        ctx.globalAlpha = 0.82;
+        ctx.beginPath();
+        for (let x = -extent; x <= extent; x += gap) {
+          ctx.moveTo(x, -extent);
+          ctx.lineTo(x, extent);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, cssWidth, cssHeight);
+        const cx = cssWidth / 2;
+        const cy = cssHeight / 2;
+        const radius = Math.min(cssWidth * 0.39, cssHeight * 0.44);
+
+        const halo = ctx.createRadialGradient(cx, cy, radius * 0.3, cx, cy, radius * 1.16);
+        halo.addColorStop(0, 'rgba(255,255,255,0.035)');
+        halo.addColorStop(0.82, 'rgba(255,255,255,0.018)');
+        halo.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * 1.16, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.fillStyle = 'rgba(8, 8, 10, 0.48)';
+        ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+        ctx.globalCompositeOperation = 'screen';
+        lineField(0, '#79e7ef');
+        lineField(angle, '#ff9279');
+        ctx.restore();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius + 0.5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      function update() {
+        angle = Number(slider.value);
+        const signed = angle > 0 ? `+${angle}°` : `${angle}°`;
+        readout.textContent = signed;
+        slider.setAttribute('aria-valuetext', `${angle} degrees`);
+        draw();
+      }
+
+      slider.addEventListener('input', update);
+      new ResizeObserver(fitCanvas).observe(canvas);
+      update();
+    })();
+  </script>
+</body>
+</html>

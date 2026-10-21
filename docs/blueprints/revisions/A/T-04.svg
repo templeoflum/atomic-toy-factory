@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">T-04 Operating sequence / render and simulation lifecycle</title>
+<desc id="desc">Atomic Factory toy chassis engineering proposal revision A. Draft, not approved for production. All dimensions in CSS pixels unless noted. Diagram not to scale.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#f8faf9}text{fill:#203d52;font-family:ui-monospace,Menlo,monospace}.label{font-size:20px}.note{font-size:18px}.small{font-size:15px}.heading{font-size:30px;font-weight:700}.box{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#e8f0f3;stroke:#203d52;stroke-width:2}.host{fill:#f1f3ed;stroke:#203d52;stroke-width:2}.line{fill:none;stroke:#203d52;stroke-width:2}.dim{fill:none;stroke:#718b9c;stroke-width:1;stroke-dasharray:5 4}.draft{fill:#9b432f;font-size:20px;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="box"/>
+<text x="55" y="76" class="heading">ATOMIC FACTORY / T-04</text>
+<text x="55" y="116" class="heading">Operating sequence / render and simulation lifecycle</text>
+<text x="1070" y="75" class="draft">DRAFT — NOT FOR PRODUCTION</text>
+<text x="1070" y="108" class="small">REV A / 2026-09-16 / NTS</text>
+<rect x="80" y="220" width="230" height="80" class="box"/>
+<text x="96" y="250" class="small">MOUNT / fresh channel</text>
+<rect x="430" y="220" width="260" height="80" class="box"/>
+<text x="446" y="250" class="small">READY / validate spec</text>
+<rect x="810" y="220" width="260" height="80" class="box"/>
+<text x="826" y="250" class="small">INIT / initial value</text>
+<path d="M310 260L430 260" class="line" marker-end="url(#arrow)"/>
+<path d="M690 260L810 260" class="line" marker-end="url(#arrow)"/>
+<rect x="810" y="390" width="260" height="85" class="box"/>
+<text x="826" y="420" class="label">ACTIVE / render</text>
+<path d="M940 300L940 390" class="line" marker-end="url(#arrow)"/>
+<rect x="80" y="390" width="500" height="150" class="box"/>
+<text x="96" y="420" class="label">PARAMETER CHANGE</text>
+<text x="105" y="445" class="note">Clamp + validate → apply model parameter</text>
+<text x="105" y="472" class="note">Readout acknowledges sequence</text>
+<text x="105" y="499" class="note">Static: redraw once • Animated: next frame</text>
+<path d="M580 455L810 455" class="line" marker-end="url(#arrow)"/>
+<rect x="810" y="610" width="260" height="85" class="box"/>
+<text x="826" y="640" class="label">PAUSED / no RAF</text>
+<path d="M900 475L900 610" class="line" marker-end="url(#arrow)"/>
+<path d="M1010 610L1010 475" class="line" marker-end="url(#arrow)"/>
+<text x="1075" y="550" class="small">visibility</text>
+<rect x="1210" y="390" width="300" height="120" class="box"/>
+<text x="1226" y="420" class="label">UNMOUNT / REPLACE</text>
+<path d="M1070 430L1210 430" class="line" marker-end="url(#arrow)"/>
+<text x="1230" y="452" class="note">Invalidate channel</text>
+<text x="1230" y="479" class="small">Cancel loop; remove frame</text>
+<text x="80" y="620" class="note">RESIZE / any mounted state</text>
+<text x="80" y="647" class="note">Measure → update backing store → redraw.</text>
+<text x="80" y="674" class="note">Do not reset time, phase or parameter.</text>
+<text x="80" y="740" class="note">01  Separate applyParameter(), simulate(dt), render(size), dispose(). Names illustrative.</text>
+<text x="80" y="767" class="note">02  Animated: requestAnimationFrame timestamp; never advance physics per frame count.</text>
+<text x="80" y="794" class="note">03  Proposed fixed dt = 1/120 s; &lt;= 8 catch-up steps; bound long gaps and discard excess.</text>
+<text x="80" y="821" class="note">    Time cap is a stability policy, not permission to mislabel physical elapsed time.</text>
+<text x="80" y="848" class="note">04  On resume reset wall-clock baseline; no giant jump or background catch-up.</text>
+<text x="80" y="875" class="note">05  Readiness timeout / invalid spec → host error state, dock disabled; no fake completion.</text>
+<text x="80" y="902" class="note">06  Static toys need no permanent animation loop. Runtime status is distinct from worker status.</text>
+<path d="M24 970H1576M1040 970V1076M1340 970V1076" class="line"/>
+<text x="55" y="1002" class="note">TOY CHASSIS / NEW GENERATION / PROPOSED ENGINEERING STANDARD</text>
+<text x="55" y="1029" class="note">Units: CSS px • NTS: not to scale • Solid: boundary • Dashed: clearance / dimension</text>
+<text x="1060" y="1002" class="note">Drawn: Codex</text>
+<text x="1060" y="1029" class="note">Approval: PENDING DONOVAN</text>
+<text x="1360" y="1002" class="note">T-04 / REV A</text>
+<text x="1360" y="1029" class="note">Sheet 4 of 5</text>
+</svg>

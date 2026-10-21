@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tension / A Plucked String</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --paper: #f2eadb;
+      --muted: #918c85;
+      --accent: #f2a65a;
+      --track: #353432;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(76, 73, 68, .22), transparent 35%),
+        #171716;
+      color: var(--paper);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    main {
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: clamp(18px, 4vw, 48px);
+      gap: 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .kicker {
+      margin: 0 0 7px;
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 5vw, 58px);
+      font-weight: 400;
+      letter-spacing: -.04em;
+      line-height: .95;
+    }
+
+    .hint {
+      margin: 5px 0 0;
+      max-width: 24ch;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: right;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 180px;
+      border-top: 1px solid #33312e;
+      border-bottom: 1px solid #33312e;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .stage.dragging { cursor: grabbing; }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .pluck-note {
+      position: absolute;
+      left: 50%;
+      top: calc(50% + 42px);
+      transform: translateX(-50%);
+      margin: 0;
+      color: #77736d;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+
+    .stage.used .pluck-note { opacity: 0; }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: clamp(22px, 5vw, 70px);
+    }
+
+    .control { min-width: 0; }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+      color: #aaa49b;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    output { color: var(--paper); }
+
+    input[type="range"] {
+      width: 100%;
+      height: 30px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(to right, var(--accent) 0 var(--fill), var(--track) var(--fill) 100%);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--track);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 22px;
+      height: 22px;
+      margin-top: -9.5px;
+      appearance: none;
+      border: 2px solid #171716;
+      border-radius: 50%;
+      background: var(--paper);
+      box-shadow: 0 0 0 1px #77716a;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 19px;
+      height: 19px;
+      border: 2px solid #171716;
+      border-radius: 50%;
+      background: var(--paper);
+      box-shadow: 0 0 0 1px #77716a;
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px #171716, 0 0 0 5px var(--accent); }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px #171716, 0 0 0 5px var(--accent); }
+
+    .frequency {
+      min-width: 8ch;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .frequency small {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 540px) {
+      main { padding: 20px; gap: 14px; }
+      header { display: block; }
+      .hint { text-align: left; margin-top: 12px; }
+      .control-row { grid-template-columns: 1fr; gap: 6px; }
+      .frequency { text-align: left; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pluck-note { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="kicker">wave study 01</p>
+        <h1>Plucked String</h1>
+      </div>
+      <p class="hint">Pull the string, then let go.<br>Sound follows motion.</p>
+    </header>
+
+    <section class="stage" id="stage" aria-label="Interactive string. Drag vertically and release to pluck." role="application" tabindex="0">
+      <canvas id="canvas"></canvas>
+      <p class="pluck-note">drag to pluck</p>
+    </section>
+
+    <div class="control-row">
+      <div class="control">
+        <div class="label-row">
+          <label for="tension">Tension</label>
+          <output id="tensionValue" for="tension">55%</output>
+        </div>
+        <input id="tension" type="range" min="10" max="100" value="55" step="1" aria-describedby="frequency">
+      </div>
+      <div class="frequency" id="frequency" aria-live="polite">196 <small>Hz</small></div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      const stage = document.getElementById('stage');
+      const slider = document.getElementById('tension');
+      const tensionValue = document.getElementById('tensionValue');
+      const frequencyReadout = document.getElementById('frequency');
+
+      let width = 1;
+      let height = 1;
+      let dpr = 1;
+      let dragging = false;
+      let dragX = .5;
+      let dragY = 0;
+      let amplitude = 0;
+      let phase = 0;
+      let lastTime = performance.now();
+      let audioContext = null;
+
+      const tension = () => Number(slider.value);
+      const frequency = () => Math.round(82 + Math.pow(tension() / 100, .78) * 208);
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function updateReadout() {
+        const value = tension();
+        tensionValue.textContent = value + '%';
+        frequencyReadout.innerHTML = frequency() + ' <small>Hz</small>';
+        slider.style.setProperty('--fill', ((value - 10) / 90 * 100) + '%');
+      }
+
+      function localPoint(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
+          y: event.clientY - rect.top
+        };
+      }
+
+      function beginDrag(event) {
+        const p = localPoint(event);
+        const center = height / 2;
+        if (Math.abs(p.y - center) > Math.max(70, height * .3)) return;
+        dragging = true;
+        dragX = Math.max(.08, Math.min(.92, p.x / width));
+        dragY = Math.max(-height * .28, Math.min(height * .28, p.y - center));
+        amplitude = 0;
+        stage.classList.add('dragging', 'used');
+        stage.setPointerCapture(event.pointerId);
+      }
+
+      function moveDrag(event) {
+        if (!dragging) return;
+        const p = localPoint(event);
+        dragX = Math.max(.08, Math.min(.92, p.x / width));
+        dragY = Math.max(-height * .3, Math.min(height * .3, p.y - height / 2));
+      }
+
+      function endDrag(event) {
+        if (!dragging) return;
+        dragging = false;
+        stage.classList.remove('dragging');
+        amplitude = dragY;
+        phase = amplitude >= 0 ? Math.PI / 2 : -Math.PI / 2;
+        playPluck(Math.min(1, Math.abs(dragY) / (height * .25)), dragX);
+        dragY = 0;
+        if (event.pointerId != null && stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId);
+      }
+
+      function playPluck(strength, position) {
+        if (strength < .025) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        audioContext ||= new AudioCtx();
+        if (audioContext.state === 'suspended') audioContext.resume();
+
+        const now = audioContext.currentTime;
+        const master = audioContext.createGain();
+        const tone = audioContext.createBiquadFilter();
+        const f = frequency();
+        tone.type = 'lowpass';
+        tone.frequency.value = Math.min(6000, f * 9);
+        tone.Q.value = .6;
+        master.gain.setValueAtTime(.0001, now);
+        master.gain.exponentialRampToValueAtTime(.11 * Math.max(.15, strength), now + .008);
+        master.gain.exponentialRampToValueAtTime(.0001, now + 1.8 + tension() / 80);
+        tone.connect(master).connect(audioContext.destination);
+
+        [1, 2, 3, 4, 5].forEach((harmonic) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const pluckColor = Math.abs(Math.sin(Math.PI * harmonic * position));
+          osc.type = harmonic === 1 ? 'sine' : 'triangle';
+          osc.frequency.value = f * harmonic;
+          osc.detune.value = harmonic * .7;
+          gain.gain.value = strength * pluckColor / Math.pow(harmonic, 1.65);
+          osc.connect(gain).connect(tone);
+          osc.start(now);
+          osc.stop(now + 2.7);
+        });
+      }
+
+      function stringY(t, now) {
+        const center = height / 2;
+        if (dragging) {
+          const peak = dragX;
+          const shape = t < peak ? t / peak : (1 - t) / (1 - peak);
+          return center + dragY * Math.max(0, shape);
+        }
+        if (Math.abs(amplitude) < .08) return center;
+        const fundamental = Math.sin(Math.PI * t);
+        const overtone = .24 * Math.sin(2 * Math.PI * t) + .1 * Math.sin(3 * Math.PI * t);
+        return center + amplitude * Math.sin(phase) * (fundamental + overtone);
+      }
+
+      function draw(now) {
+        const dt = Math.min(.04, (now - lastTime) / 1000);
+        lastTime = now;
+        ctx.clearRect(0, 0, width, height);
+
+        const pad = Math.max(28, Math.min(54, width * .06));
+        const left = pad;
+        const right = width - pad;
+        const span = right - left;
+        const center = height / 2;
+
+        ctx.strokeStyle = '#2b2a28';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 7]);
+        ctx.beginPath();
+        ctx.moveTo(left, center);
+        ctx.lineTo(right, center);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#b9b0a3';
+        ctx.fillRect(left - 5, center - 32, 5, 64);
+        ctx.fillRect(right, center - 32, 5, 64);
+        ctx.fillStyle = '#4b4843';
+        ctx.fillRect(left - 11, center - 38, 6, 76);
+        ctx.fillRect(right + 5, center - 38, 6, 76);
+
+        if (!dragging && Math.abs(amplitude) >= .08) {
+          phase += dt * Math.PI * 2 * (2.2 + tension() / 35);
+          amplitude *= Math.exp(-dt * (1.35 - tension() / 180));
+        }
+
+        const segments = Math.max(80, Math.floor(span / 5));
+        ctx.beginPath();
+        for (let i = 0; i <= segments; i++) {
+          const t = i / segments;
+          const x = left + span * t;
+          const y = stringY(t, now);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#f2eadb';
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = 'rgba(242,166,90,.45)';
+        ctx.shadowBlur = Math.min(12, Math.abs(amplitude) * .15);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        if (dragging) {
+          const x = left + span * dragX;
+          const y = center + dragY;
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#f2a65a';
+          ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      stage.addEventListener('pointerdown', beginDrag);
+      stage.addEventListener('pointermove', moveDrag);
+      stage.addEventListener('pointerup', endDrag);
+      stage.addEventListener('pointercancel', endDrag);
+      stage.addEventListener('keydown', (event) => {
+        if (event.key === ' ' || event.key === 'Enter') {
+          event.preventDefault();
+          stage.classList.add('used');
+          amplitude = -Math.min(48, height * .18);
+          phase = -Math.PI / 2;
+          playPluck(.65, .48);
+        }
+      });
+      slider.addEventListener('input', updateReadout);
+      window.addEventListener('resize', resize);
+
+      resize();
+      updateReadout();
+      requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>

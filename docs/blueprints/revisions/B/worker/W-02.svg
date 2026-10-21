@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">W-02 Toy assembly / supplied parts and build contract</title>
+<desc id="desc">Revision B draft. WORKER CONSTRUCTION REFERENCE / SUPPLIED PARTS + BUILD CONTRACT. Not approved or implemented.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#fafbf8}text{font-family:ui-monospace,Menlo,monospace;fill:#203d52}.text{font-size:20px}.note{font-size:18px}.small{font-size:15px}.title{font-size:30px;font-weight:bold}.outline{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#edf3f4;stroke:#203d52;stroke-width:2}.supplied{fill:#f0f1e8;stroke:#203d52;stroke-width:2}.draft{font-size:19px;fill:#93432c;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="outline"/>
+<text x="55" y="70" class="title">ATOMIC FACTORY / W-02 / REV B</text>
+<text x="55" y="113" class="title">Toy assembly / supplied parts and build contract</text>
+<text x="1090" y="66" class="draft">DRAFT / APPROVAL PENDING</text>
+<text x="1090" y="99" class="small">2026-09-16 / NTS</text>
+<text x="55" y="155" class="note">WORKER CONSTRUCTION REFERENCE — supplied parts and build contract</text>
+<rect x="70" y="210" width="370" height="180" class="supplied"/>
+<text x="86" y="240" class="text">SUPPLIED / CHASSIS</text>
+<text x="90" y="270" class="note">Stage size + lifecycle</text>
+<text x="90" y="297" class="note">Parameter input adapter</text>
+<text x="90" y="324" class="note">Readout output adapter</text>
+<text x="90" y="351" class="note">Identity + Details components</text>
+<rect x="600" y="210" width="370" height="180" class="outline"/>
+<text x="616" y="240" class="text">BUILD / TOY CONTENT</text>
+<text x="620" y="270" class="note">Identity + source relationship</text>
+<text x="620" y="297" class="note">Mechanic state + parameter</text>
+<text x="620" y="324" class="note">Render / simulate as needed</text>
+<text x="620" y="351" class="note">Description + references</text>
+<path d="M440 300L600 300" class="outline" marker-end="url(#arrow)"/>
+<rect x="1120" y="210" width="390" height="180" class="outline"/>
+<text x="1136" y="240" class="text">DELIVER / WORKSPACE</text>
+<text x="1140" y="270" class="note">index.html + inline CSS / JS</text>
+<text x="1140" y="297" class="note">Identity + Details metadata</text>
+<text x="1140" y="324" class="note">No dependencies or remote assets</text>
+<text x="1140" y="351" class="note">Only attempt workspace writable</text>
+<path d="M970 300L1120 300" class="outline" marker-end="url(#arrow)"/>
+<rect x="70" y="445" width="690" height="260" class="outline"/>
+<text x="86" y="475" class="text">ASSEMBLY PORTS / DRAFT NOT IMPLEMENTED</text>
+<text x="95" y="505" class="note">input: initialize(parameter, stageSize)</text>
+<text x="95" y="532" class="note">input: parameterChanged(value)</text>
+<text x="95" y="559" class="note">input: resized(stageSize)</text>
+<text x="95" y="586" class="note">input: activeChanged(boolean)</text>
+<text x="95" y="613" class="note">output: identity / parameter spec</text>
+<text x="95" y="640" class="note">output: details / ready / readout / error</text>
+<rect x="810" y="445" width="700" height="260" class="outline"/>
+<text x="826" y="475" class="text">BEHAVIORAL REQUIREMENTS</text>
+<text x="835" y="505" class="note">State survives resize; controls do not reset it.</text>
+<text x="835" y="532" class="note">Animation uses elapsed time, not frame count.</text>
+<text x="835" y="559" class="note">Pause inactive work; resume without a time jump.</text>
+<text x="835" y="586" class="note">Static drawing redraws on change, not forever.</text>
+<text x="835" y="613" class="note">Dragging must excite where the visual implies.</text>
+<text x="835" y="640" class="note">One variable changes; declared invariants stay fixed.</text>
+<text x="70" y="760" class="note">ACCEPTANCE SURFACE</text>
+<text x="70" y="787" class="note">Full parameter range: source relationship stays honest; intended effect remains visible.</text>
+<text x="70" y="814" class="note">Actual supplied stage sizes: essential visual content fits; no hidden controls or labels.</text>
+<text x="70" y="841" class="note">Motion: visibly smooth; measurements and hardware recorded by factory QC, not guessed.</text>
+<text x="70" y="868" class="note">Build: no network, storage, host DOM or extra access. Use only the supplied integration adapter.</text>
+<text x="70" y="895" class="note">Integration API + metadata schema are proposed; supplied parts require implementation and testing.</text>
+<path d="M24 970H1576M1050 970V1076M1350 970V1076" class="outline"/>
+<text x="55" y="1004" class="note">NEW GENERATION / DRAWINGS ARE PROPOSALS, NOT SHIPPED REQUIREMENTS</text>
+<text x="55" y="1031" class="note">Solid boundary • Shaded region: supplied surface • NTS: schematic / not to scale</text>
+<text x="1070" y="1004" class="note">Drawn: Codex</text>
+<text x="1070" y="1031" class="small">Approval: Donovan / pending</text>
+<text x="1370" y="1004" class="note">W-02 / REV B</text>
+<text x="1370" y="1031" class="note">2026-09-16</text>
+</svg>

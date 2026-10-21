@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Resonance</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f5ff;
+      --muted: #9aa1bd;
+      --cyan: #78efff;
+      --violet: #a78bfa;
+      --panel: rgba(15, 18, 37, .74);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #070912;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    main {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 360px;
+      isolation: isolate;
+    }
+    canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .heading {
+      position: absolute;
+      z-index: 2;
+      top: clamp(22px, 5vh, 52px);
+      left: clamp(22px, 6vw, 72px);
+      pointer-events: none;
+    }
+    .eyebrow {
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 8px 0 0;
+      font-size: clamp(30px, 5vw, 62px);
+      line-height: .95;
+      letter-spacing: -.055em;
+      font-weight: 620;
+    }
+    .panel {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: clamp(18px, 4vh, 38px);
+      width: min(560px, calc(100% - 32px));
+      transform: translateX(-50%);
+      padding: 16px 20px 18px;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(21,25,48,.9), rgba(10,13,29,.82));
+      box-shadow: 0 20px 65px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.05);
+      backdrop-filter: blur(18px);
+    }
+    .row { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+    label { font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+    output {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    output strong { font-size: 31px; line-height: 1; letter-spacing: -.04em; }
+    output span { color: var(--muted); font-size: 12px; }
+    input[type="range"] {
+      display: block;
+      width: 100%;
+      height: 32px;
+      margin: 10px 0 2px;
+      padding: 0;
+      background: transparent;
+      cursor: ew-resize;
+      accent-color: var(--cyan);
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 5px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--cyan) 0 var(--fill), rgba(255,255,255,.13) var(--fill));
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      width: 24px; height: 24px; margin-top: -9.5px;
+      border: 5px solid #fff; border-radius: 50%;
+      background: #11152b;
+      box-shadow: 0 0 0 4px rgba(120,239,255,.16), 0 3px 12px rgba(0,0,0,.5);
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-moz-range-track { height: 5px; border-radius: 99px; background: rgba(255,255,255,.13); }
+    input[type="range"]::-moz-range-progress { height: 5px; border-radius: 99px; background: var(--cyan); }
+    input[type="range"]::-moz-range-thumb {
+      width: 14px; height: 14px; border: 5px solid #fff; border-radius: 50%;
+      background: #11152b; box-shadow: 0 0 0 4px rgba(120,239,255,.16);
+    }
+    input[type="range"]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: 8px; }
+    .scale { display: flex; justify-content: space-between; color: #737b99; font-size: 10px; font-weight: 650; }
+    .hint { margin: 11px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .legend {
+      position: absolute; z-index: 2; right: clamp(20px, 5vw, 60px); top: clamp(25px, 5vh, 50px);
+      display: grid; gap: 9px; color: var(--muted); font-size: 11px; pointer-events: none;
+    }
+    .legend span { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 0 9px currentColor; }
+    .inner { color: var(--cyan); } .outer { color: var(--violet); }
+    @media (max-width: 540px) {
+      .legend { top: 24px; right: 20px; }
+      .legend span { font-size: 0; gap: 0; }
+      .heading { top: 22px; left: 22px; }
+      .panel { padding: 14px 17px 16px; }
+      .hint { font-size: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .hint::after { content: " Motion is slowed for your preference."; } }
+  </style>
+</head>
+<body>
+  <main>
+    <canvas id="space" aria-hidden="true"></canvas>
+    <header class="heading">
+      <div class="eyebrow">Orbital mechanics</div>
+      <h1>In Resonance</h1>
+    </header>
+    <div class="legend" aria-hidden="true">
+      <span><i class="dot inner"></i> inner body</span>
+      <span><i class="dot outer"></i> outer body</span>
+    </div>
+    <section class="panel" aria-label="Resonance control">
+      <div class="row">
+        <label for="ratio">Orbital ratio</label>
+        <output id="reading" for="ratio" aria-live="polite"><strong>2 : 1</strong><span>inner : outer</span></output>
+      </div>
+      <input id="ratio" type="range" min="0" max="8" step="1" value="4" aria-label="Orbital resonance ratio">
+      <div class="scale" aria-hidden="true"><span>1 : 1</span><span>5 : 1</span></div>
+      <p class="hint" id="explanation">For every outer orbit, the inner body completes 2 — returning them to alignment.</p>
+    </section>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      const canvas = document.getElementById('space');
+      const ctx = canvas.getContext('2d');
+      const slider = document.getElementById('ratio');
+      const reading = document.getElementById('reading');
+      const explanation = document.getElementById('explanation');
+      const resonances = [[1,1],[4,3],[3,2],[5,3],[2,1],[5,2],[3,1],[4,1],[5,1]];
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let W = 0, H = 0, dpr = 1, time = 0, last = 0, chosen = resonances[4], transition = 1;
+      let oldRatio = chosen.slice();
+      let stars = [];
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        W = rect.width; H = rect.height; dpr = Math.min(devicePixelRatio || 1, 2);
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        const count = Math.min(130, Math.floor(W * H / 8500));
+        stars = Array.from({length: count}, (_, i) => ({
+          x: ((i * 67.7) % 101) / 101 * W,
+          y: ((i * i * 19.3 + 17) % 103) / 103 * H,
+          r: .35 + (i % 5) * .14,
+          a: .12 + (i % 7) * .035
+        }));
+      }
+
+      function setRatio() {
+        oldRatio = currentRatio();
+        chosen = resonances[+slider.value];
+        transition = 0;
+        const [p,q] = chosen;
+        slider.style.setProperty('--fill', `${(+slider.value / 8) * 100}%`);
+        reading.innerHTML = `<strong>${p} : ${q}</strong><span>inner : outer</span>`;
+        explanation.textContent = `In the same span, the inner body completes ${p} ${p === 1 ? 'orbit' : 'orbits'} while the outer completes ${q} — then they realign.`;
+      }
+
+      function currentRatio() {
+        const ease = 1 - Math.pow(1 - Math.min(transition, 1), 3);
+        return [oldRatio[0] + (chosen[0]-oldRatio[0])*ease, oldRatio[1] + (chosen[1]-oldRatio[1])*ease];
+      }
+
+      function point(cx, cy, radius, angle, squash) {
+        return [cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius * squash];
+      }
+
+      function glowDot(x,y,r,color) {
+        ctx.save();
+        ctx.shadowBlur = r * 2.8; ctx.shadowColor = color;
+        const g = ctx.createRadialGradient(x-r*.25,y-r*.25,1,x,y,r);
+        g.addColorStop(0,'#fff'); g.addColorStop(.24,color); g.addColorStop(1,color.replace('1)', '0)'));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r*1.6,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+
+      function orbit(cx,cy,r,squash,color) {
+        ctx.strokeStyle = color; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.ellipse(cx,cy,r,r*squash,0,0,Math.PI*2); ctx.stroke();
+      }
+
+      function draw(now) {
+        const dt = Math.min((now-last || 16)/1000, .05); last = now;
+        time += dt * (reduceMotion ? .13 : .42); transition = Math.min(1, transition + dt * 2.2);
+        ctx.clearRect(0,0,W,H);
+        const bg = ctx.createRadialGradient(W*.52,H*.43,0,W*.52,H*.43,Math.max(W,H)*.72);
+        bg.addColorStop(0,'#171b35'); bg.addColorStop(.42,'#0c1022'); bg.addColorStop(1,'#05060d');
+        ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+        for (const s of stars) { ctx.globalAlpha = s.a + Math.sin(time*1.4+s.x)*.035; ctx.fillStyle='#dfe7ff'; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,7); ctx.fill(); }
+        ctx.globalAlpha = 1;
+
+        const compact = W < 620;
+        const reservedBottom = compact ? 190 : 155;
+        const availH = Math.max(170, H - reservedBottom);
+        const cx = compact ? W*.5 : W*.53;
+        const cy = Math.max(130, Math.min(H*.47, availH*.56 + 32));
+        const outerR = Math.max(72, Math.min(W*(compact?.36:.29), availH*.43, 250));
+        const innerR = outerR*.58;
+        const squash = compact ? .62 : .67;
+        orbit(cx,cy,innerR,squash,'rgba(120,239,255,.20)');
+        orbit(cx,cy,outerR,squash,'rgba(167,139,250,.20)');
+
+        const [p,q] = currentRatio();
+        const phase = -Math.PI/2;
+        const aOuter = time*q + phase;
+        const aInner = time*p + phase;
+
+        // Ghost conjunction spokes reveal the repeated geometry of the resonance.
+        const spokeCount = Math.max(1, chosen[0]-chosen[1]);
+        for (let i=0;i<spokeCount;i++) {
+          const a = phase + i*Math.PI*2/spokeCount;
+          const pi = point(cx,cy,innerR,a,squash), po = point(cx,cy,outerR,a,squash);
+          ctx.strokeStyle='rgba(255,255,255,.055)'; ctx.setLineDash([3,6]);
+          ctx.beginPath(); ctx.moveTo(pi[0],pi[1]); ctx.lineTo(po[0],po[1]); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        const inner = point(cx,cy,innerR,aInner,squash), outer = point(cx,cy,outerR,aOuter,squash);
+        const sync = Math.pow((1 + Math.cos(aInner-aOuter))/2, 8);
+        ctx.strokeStyle=`rgba(221,225,255,${.08 + sync*.38})`; ctx.lineWidth=1+sync;
+        ctx.beginPath(); ctx.moveTo(inner[0],inner[1]); ctx.lineTo(outer[0],outer[1]); ctx.stroke();
+
+        glowDot(cx,cy,Math.max(11,outerR*.065),'rgba(255,211,110,1)');
+        glowDot(inner[0],inner[1],Math.max(5.5,outerR*.038),'rgba(120,239,255,1)');
+        glowDot(outer[0],outer[1],Math.max(7,outerR*.047),'rgba(167,139,250,1)');
+
+        ctx.textAlign='center'; ctx.font='600 10px ui-sans-serif, system-ui';
+        ctx.fillStyle=`rgba(255,255,255,${.35 + sync*.55})`;
+        ctx.fillText(sync > .82 ? 'ALIGNMENT' : `${chosen[0]} : ${chosen[1]} RESONANCE`, cx, cy + outerR*squash + 27);
+        requestAnimationFrame(draw);
+      }
+      slider.addEventListener('input', setRatio);
+      addEventListener('resize', resize, {passive:true});
+      resize(); setRatio(); requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>

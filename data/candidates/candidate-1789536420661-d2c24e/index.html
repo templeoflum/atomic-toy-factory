@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore how a rising waterline reshapes a contour island.">
+  <title>Contour Island</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f0df;
+      --muted: #9cb3b5;
+      --ocean: #071b28;
+      --panel: rgba(8, 31, 42, .82);
+      --line: rgba(205, 235, 222, .16);
+      --accent: #f5dc7a;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(25, 87, 102, .28), transparent 35rem),
+        radial-gradient(circle at 85% 90%, rgba(13, 55, 72, .44), transparent 30rem),
+        #04131e;
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+    }
+
+    main {
+      width: min(1040px, calc(100vw - 28px));
+      height: min(760px, calc(100dvh - 28px));
+      min-height: 390px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .38), inset 0 1px rgba(255, 255, 255, .04);
+      backdrop-filter: blur(14px);
+    }
+
+    .map-wrap {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      background: #082536;
+      isolation: isolate;
+    }
+
+    .map-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      box-shadow: inset -1px 0 var(--line), inset 0 0 80px rgba(0, 8, 16, .18);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .compass {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(231, 244, 234, .24);
+      border-radius: 50%;
+      color: rgba(240, 245, 228, .78);
+      background: rgba(4, 22, 31, .34);
+      font: 700 12px/1 system-ui, sans-serif;
+      letter-spacing: .08em;
+      backdrop-filter: blur(8px);
+    }
+
+    .compass::after {
+      content: "";
+      position: absolute;
+      bottom: 7px;
+      width: 1px;
+      height: 10px;
+      background: currentColor;
+      transform-origin: center -8px;
+      transform: rotate(180deg);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+    }
+
+    .panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+      padding: clamp(26px, 5vh, 52px) clamp(24px, 3vw, 38px) 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #81aaa9;
+      font-size: .78rem;
+      font-weight: 750;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 8ch;
+      font-size: clamp(2rem, 4.8vw, 4.1rem);
+      font-weight: 620;
+      line-height: .95;
+      letter-spacing: -.055em;
+    }
+
+    .readout {
+      margin-top: clamp(24px, 5vh, 48px);
+    }
+
+    .number-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    output {
+      color: var(--accent);
+      font-size: clamp(3.4rem, 8vw, 6.4rem);
+      font-weight: 520;
+      line-height: .82;
+      letter-spacing: -.07em;
+    }
+
+    .unit {
+      color: #c6d3cd;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .status {
+      min-height: 1.45em;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.45;
+    }
+
+    .control { margin-top: 28px; }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      color: #d6e2db;
+      font-size: .9rem;
+      font-weight: 680;
+    }
+
+    label span:last-child {
+      color: #789a9d;
+      font-size: .75rem;
+      letter-spacing: .05em;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 44px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      background: transparent;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) 0 var(--fill), rgba(180, 213, 207, .16) var(--fill) 100%);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, .32);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 99px;
+      background: rgba(180, 213, 207, .16);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, .32);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 6px;
+      border-radius: 99px;
+      background: var(--accent);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 30px;
+      height: 30px;
+      margin-top: -12px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 8px solid #f5dc7a;
+      border-radius: 50%;
+      background: #18323b;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .38), 0 0 0 1px rgba(255,255,255,.2);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: 8px solid #f5dc7a;
+      border-radius: 50%;
+      background: #18323b;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .38);
+    }
+
+    input[type="range"]:focus-visible {
+      outline: 2px solid #f7edbd;
+      outline-offset: 4px;
+      border-radius: 99px;
+    }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: -3px;
+      color: #718f92;
+      font-size: .72rem;
+      font-weight: 650;
+    }
+
+    .hint {
+      margin: 24px 0 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: #78979a;
+      font-size: .78rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+      main {
+        height: min(820px, calc(100dvh - 20px));
+        width: min(520px, calc(100vw - 20px));
+        min-height: 450px;
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+        border-radius: 22px;
+      }
+
+      .map-wrap::after { box-shadow: inset 0 -1px var(--line), inset 0 0 60px rgba(0, 8, 16, .15); }
+      .panel { padding: 22px 24px 24px; }
+      .panel header { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+      .eyebrow { margin-bottom: 6px; }
+      h1 { max-width: none; font-size: clamp(1.8rem, 8vw, 2.5rem); }
+      .readout { margin: 0; text-align: right; }
+      output { font-size: clamp(3rem, 15vw, 4.6rem); }
+      .status { margin-top: 10px; }
+      .control { margin-top: 14px; }
+      .hint { display: none; }
+      .compass { top: 16px; left: 16px; }
+    }
+
+    @media (max-height: 560px) and (min-width: 701px) {
+      main { height: calc(100dvh - 20px); width: calc(100vw - 20px); }
+      .panel { padding-top: 24px; }
+      .readout { margin-top: 24px; }
+      .hint { margin-top: 14px; padding-top: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main aria-labelledby="title">
+    <section class="map-wrap" aria-label="Topographic island visualization">
+      <canvas id="map" role="img" aria-label="A top-down island with nested elevation contours. Move the waterline slider to flood lower elevations."></canvas>
+      <div class="compass" aria-hidden="true">N</div>
+    </section>
+
+    <section class="panel">
+      <header>
+        <div>
+          <p class="eyebrow">Topographic study</p>
+          <h1 id="title">Contour Island</h1>
+        </div>
+        <div class="readout" aria-label="Current waterline">
+          <div class="number-line"><output id="value" for="waterline">26</output><span class="unit">m</span></div>
+        </div>
+      </header>
+
+      <div>
+        <p class="status" id="status" aria-live="polite">Six ridges remain above water.</p>
+        <div class="control">
+          <label for="waterline"><span>Waterline</span><span>SEA LEVEL</span></label>
+          <input id="waterline" type="range" min="0" max="80" step="1" value="26" aria-describedby="status hint">
+          <div class="scale" aria-hidden="true"><span>0 m</span><span>80 m</span></div>
+        </div>
+        <p class="hint" id="hint">Drag the waterline. Low ground slips beneath the surface while the summit holds.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('map');
+      const ctx = canvas.getContext('2d');
+      const slider = document.getElementById('waterline');
+      const output = document.getElementById('value');
+      const status = document.getElementById('status');
+      const levels = [0, 10, 20, 30, 40, 50, 60, 70, 80];
+      const land = ['#537d63', '#668b68', '#789970', '#8ca579', '#a3b382', '#bbc18d', '#d0cb99', '#e2d6a6', '#eee1b6'];
+      const points = 150;
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let paths = [];
+
+      const noise = (angle, seed) =>
+        Math.sin(angle * 2 + seed * .8) * .055 +
+        Math.sin(angle * 3 - seed * 1.4) * .043 +
+        Math.sin(angle * 5 + seed * 2.1) * .026 +
+        Math.sin(angle * 9 - seed * .6) * .012;
+
+      function ring(scale, index) {
+        const path = new Path2D();
+        for (let i = 0; i <= points; i++) {
+          const a = (i / points) * Math.PI * 2;
+          const irregular = 1 + noise(a, index * .29) + Math.sin(a + .8) * .025 * (1 - scale);
+          const rx = width * .335 * scale * irregular;
+          const ry = Math.min(height * .39, width * .31) * scale * (1 + noise(a + 1.1, index * .21) * .7);
+          const driftX = width * (.016 * index - .055);
+          const driftY = height * (.012 * index - .035);
+          const x = width * .51 + driftX + Math.cos(a) * rx;
+          const y = height * .52 + driftY + Math.sin(a) * ry;
+          i === 0 ? path.moveTo(x, y) : path.lineTo(x, y);
+        }
+        path.closePath();
+        return path;
+      }
+
+      function buildPaths() {
+        paths = levels.map((_, i) => ring(1 - i * .091, i));
+      }
+
+      function drawWaterTexture(t) {
+        ctx.fillStyle = '#0a3043';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        ctx.globalAlpha = .2;
+        ctx.strokeStyle = '#6fb0bc';
+        ctx.lineWidth = 1;
+        const gap = Math.max(27, Math.min(width, height) / 14);
+        const shift = (t * .006) % gap;
+        for (let y = -gap + shift; y < height + gap; y += gap) {
+          ctx.beginPath();
+          for (let x = -10; x <= width + 10; x += 12) {
+            const yy = y + Math.sin(x * .025 + y * .018) * 2.5;
+            x < 0 ? ctx.moveTo(x, yy) : ctx.lineTo(x, yy);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        const glow = ctx.createRadialGradient(width * .48, height * .44, 0, width * .48, height * .44, Math.max(width, height) * .68);
+        glow.addColorStop(0, 'rgba(95, 164, 166, .12)');
+        glow.addColorStop(1, 'rgba(0, 10, 22, .28)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      function render(t = 0) {
+        if (!paths.length) {
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(render);
+          return;
+        }
+        const water = Number(slider.value);
+        drawWaterTexture(t);
+
+        // Submerged contours remain just visible, like ink beneath shallow water.
+        for (let i = 0; i < paths.length; i++) {
+          ctx.fillStyle = `rgba(38, 103, 116, ${.12 + i * .012})`;
+          ctx.fill(paths[i]);
+          ctx.strokeStyle = 'rgba(120, 190, 190, .10)';
+          ctx.lineWidth = 1;
+          ctx.stroke(paths[i]);
+        }
+
+        // Paint exposed bands from the shoreline inward.
+        const firstDry = Math.min(levels.length - 1, Math.floor(water / 10) + 1);
+        for (let i = firstDry; i < paths.length; i++) {
+          ctx.fillStyle = land[i];
+          ctx.fill(paths[i]);
+          ctx.strokeStyle = i === firstDry ? 'rgba(255, 246, 202, .96)' : 'rgba(50, 72, 55, .42)';
+          ctx.lineWidth = i === firstDry ? 2.5 : 1.15;
+          ctx.stroke(paths[i]);
+        }
+
+        // A soft moving gleam traces the active shore.
+        ctx.save();
+        ctx.setLineDash([3, 10]);
+        ctx.lineDashOffset = -t * .018;
+        ctx.strokeStyle = 'rgba(255,255,231,.62)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke(paths[firstDry]);
+        ctx.restore();
+
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(render);
+      }
+
+      function update() {
+        const water = Number(slider.value);
+        const remaining = Math.max(1, 8 - Math.floor(water / 10));
+        output.value = water;
+        slider.style.setProperty('--fill', `${water / .8}%`);
+        status.textContent = water >= 70
+          ? 'Only the summit remains above water.'
+          : `${remaining} ${remaining === 1 ? 'ridge remains' : 'ridges remain'} above water.`;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) render(0);
+      }
+
+      function resize() {
+        const box = canvas.getBoundingClientRect();
+        dpr = Math.min(devicePixelRatio || 1, 2);
+        width = box.width;
+        height = box.height;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        buildPaths();
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) render(0);
+      }
+
+      slider.addEventListener('input', update);
+      new ResizeObserver(resize).observe(canvas);
+      update();
+      requestAnimationFrame(render);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atomic Factory</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div><span class="eyebrow">LOCAL WORKS · 01</span><h1>Atomic<br>Factory</h1></div>
+    <div class="worker"><span id="workerDot" class="dot"></span><div><strong>Worker 01</strong><small id="workerConnection">connecting</small></div></div>
+  </header>
+
+  <main>
+    <section class="order-card" aria-labelledby="order-title">
+      <div class="section-number">01 / WORK ORDER</div>
+      <h2 id="order-title">Give one idea a moving part.</h2>
+      <label for="concept">Concept</label>
+      <textarea id="concept" rows="3">Make a toy showing two overlapping sets of parallel lines. One slider rotates one set relative to the other.</textarea>
+      <label for="referenceFile">Reference file <span>optional · copied into a read-only factory store</span></label>
+      <input id="referenceFile" type="file">
+      <label for="reference">Or local path <span>optional · absolute and read-only</span></label>
+      <input id="reference" placeholder="/path/to/reference.png">
+      <div class="issue-row"><button id="issue" class="primary">Issue work <span>→</span></button><button id="stop" class="danger" disabled>Stop work</button></div>
+      <p id="formError" class="error" role="alert"></p>
+    </section>
+
+    <section class="floor">
+      <div class="player-head"><div><span class="section-number">02 / TEST BENCH</span><h2 id="candidateTitle">Awaiting a candidate</h2></div><span id="candidateBadge" class="badge">EMPTY</span></div>
+      <div class="player-shell">
+        <div id="emptyPlayer" class="empty-player"><div class="orbit"></div><p>Issue a work order to start the line.</p></div>
+        <iframe id="player" title="Playable atomic toy" sandbox="allow-scripts" hidden></iframe>
+      </div>
+      <div class="actions">
+        <button id="keep" disabled>Keep</button>
+        <button id="rework" disabled>Rework</button>
+        <button id="shelve" disabled>Shelve</button>
+      </div>
+      <details id="provenance" class="provenance" hidden>
+        <summary><span>Provenance</span><span id="provenanceBrief"></span></summary>
+        <div id="provenanceBody" class="provenance-body"></div>
+      </details>
+      <div id="candidateTools" class="candidate-tools" hidden>
+        <label for="candidateName">Candidate name</label>
+        <div><input id="candidateName" maxlength="80"><button id="saveCandidateName">Save name</button><button id="compareCandidate">Compare lineage</button><button id="exportCandidate">Export HTML</button></div>
+      </div>
+      <section id="comparePanel" class="compare-panel" hidden aria-labelledby="compareTitle">
+        <div class="compare-heading"><h3 id="compareTitle">Version comparison</h3><button id="closeCompare">Close</button></div>
+        <div class="compare-grid">
+          <figure><figcaption id="compareLeftLabel"></figcaption><iframe id="compareLeft" title="Earlier candidate comparison" sandbox="allow-scripts"></iframe></figure>
+          <figure><figcaption id="compareRightLabel"></figcaption><iframe id="compareRight" title="Later candidate comparison" sandbox="allow-scripts"></iframe></figure>
+        </div>
+      </section>
+      <div id="reworkForm" class="rework-form" hidden>
+        <label for="correction">Operator correction</label>
+        <div><input id="correction" placeholder="Short, specific correction"><button id="submitRework" class="primary">Run rework</button></div>
+      </div>
+    </section>
+
+    <aside class="rail">
+      <section class="status-card">
+        <span class="section-number">03 / WORKER</span>
+        <div class="status-line"><span id="statusDot" class="dot"></span><h2 id="statusLabel">Idle</h2></div>
+        <p id="statusMeta">No active session</p>
+        <p class="muted">Sandbox: attempt workspace only · network off · extra access denied</p>
+        <details><summary>Activity <span id="activityCount">0</span></summary><ol id="activity"></ol></details>
+      </section>
+      <section class="history-card">
+        <div class="history-head"><span class="section-number">04 / OUTPUT RACK</span><span id="candidateCount">0</span></div>
+        <div id="history" class="history"><p class="muted">Previous candidates will appear here.</p></div>
+        <div class="backup-tools">
+          <button id="backupFactory">Backup factory</button>
+          <label for="restoreFactory" class="file-button">Import backup</label>
+          <input id="restoreFactory" type="file" accept="application/json,.json" hidden>
+        </div>
+      </section>
+    </aside>
+  </main>
+  <footer>ONE MECHANIC · ONE SLIDER · ONE WORKER</footer>
+  <script src="/app.js"></script>
+</body>
+</html>

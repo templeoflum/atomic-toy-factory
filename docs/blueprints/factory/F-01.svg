@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">F-01 Factory operating surface / direction and review</title>
+<desc id="desc">Revision C draft. Fixed factory frame; only individual sections scroll. Worker management in bottom bar; output expands in its existing right lane. Not approved or implemented.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#fafbf8}text{font-family:ui-monospace,Menlo,monospace;fill:#203d52}.text{font-size:20px}.note{font-size:18px}.small{font-size:15px}.title{font-size:30px;font-weight:bold}.outline{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#edf3f4;stroke:#203d52;stroke-width:2}.supplied{fill:#f0f1e8;stroke:#203d52;stroke-width:2}.draft{font-size:19px;fill:#93432c;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="outline"/>
+<text x="55" y="70" class="title">ATOMIC FACTORY / F-01 / REV C</text>
+<text x="55" y="113" class="title">Factory operating surface / direction and review</text>
+<text x="1090" y="66" class="draft">DRAFT / APPROVAL PENDING</text>
+<text x="1090" y="99" class="small">2026-09-16 / NTS</text>
+<text x="55" y="155" class="note">DONOVAN + FACTORY ENGINEERING ONLY — never supplied as worker construction material</text>
+<rect x="60" y="200" width="1480" height="65" class="supplied"/>
+<text x="76" y="230" class="text">FACTORY / CURRENT RUN + SELECTED CANDIDATE / BLUEPRINTS / ADMIN</text>
+<rect x="60" y="285" width="320" height="540" class="outline"/>
+<text x="76" y="315" class="text">DIRECTION / REFERENCES</text>
+<text x="80" y="350" class="note">Grounded concept cards</text>
+<text x="80" y="377" class="note">Select from several options</text>
+<text x="80" y="404" class="note">Inspect source records</text>
+<text x="80" y="431" class="note">Choose proposed mechanic</text>
+<text x="80" y="458" class="note">Inspect assembled order</text>
+<text x="80" y="485" class="note">Issue / correct / rework</text>
+<text x="80" y="512" class="note">Typing is an exception,</text>
+<text x="80" y="539" class="note">not the starting task.</text>
+<rect x="400" y="285" width="750" height="380" class="stage"/>
+<text x="416" y="315" class="text">TOY / FIRST ENCOUNTER</text>
+<text x="595" y="475" class="text">UNPRIMED VISUAL EXPLORATION</text>
+<rect x="400" y="685" width="750" height="90" class="supplied"/>
+<text x="416" y="715" class="text">PERMANENT SLIDER + ESSENTIAL READOUT</text>
+<rect x="400" y="795" width="750" height="55" class="outline"/>
+<text x="416" y="825" class="text">KEEP / REWORK / SHELVE / EXPLORE / PROVENANCE</text>
+<rect x="1170" y="285" width="370" height="565" class="outline"/>
+<text x="1186" y="315" class="text">OUTPUT + OPERATIONS</text>
+<text x="1190" y="350" class="note">Selected worker's output rack</text>
+<text x="1190" y="377" class="note">Candidate / version navigation</text>
+<text x="1190" y="404" class="note">Correction + disposition history</text>
+<text x="1190" y="431" class="note">Run records + review notes</text>
+<text x="1190" y="458" class="note">Blueprint revision + approval</text>
+<text x="1190" y="485" class="note">Admin: settings, backup, recovery</text>
+<rect x="1190" y="515" width="325" height="270" class="supplied"/>
+<text x="1206" y="547" class="small">ACCUMULATING OUTPUT / SCROLL HERE</text>
+<path d="M1526 340V810M1520 340L1526 330L1532 340M1520 810L1526 820L1532 810" class="outline"/>
+<text x="1190" y="832" class="small">Only this lane moves when scrolled.</text>
+<rect x="60" y="865" width="1480" height="65" class="supplied"/>
+<text x="76" y="891" class="text">WORKERS / 01: ACTUAL STATUS / SELECT WORKER → ITS RACK + TOY INSPECTION</text>
+<text x="76" y="918" class="small">Activity / Stop + confirmed outcome / explicit access requests • current runtime: one active worker</text>
+<text x="60" y="950" class="small">FIXED OUTER FRAME + BOTTOM BAR. Only section interiors scroll; no document scroll or scroll chaining.</text>
+<path d="M365 570V790M359 570L365 560L371 570M359 790L365 800L371 790" class="outline"/>
+<text x="80" y="810" class="small">Section-only scrolling</text>
+<path d="M24 970H1576M1050 970V1076M1350 970V1076" class="outline"/>
+<text x="55" y="1004" class="note">NEW GENERATION / DRAWINGS ARE PROPOSALS, NOT SHIPPED REQUIREMENTS</text>
+<text x="55" y="1031" class="note">Solid boundary • Shaded region: supplied surface • NTS: schematic / not to scale</text>
+<text x="1070" y="1004" class="note">Drawn: Codex</text>
+<text x="1070" y="1031" class="small">Approval: Donovan / pending</text>
+<text x="1370" y="1004" class="note">F-01 / REV C</text>
+<text x="1370" y="1031" class="note">2026-09-16</text>
+</svg>

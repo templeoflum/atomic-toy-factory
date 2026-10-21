@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111d">
+  <title>Cable Tension</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5f7f2;
+      --muted: #96a4b3;
+      --line: #d7efff;
+      --accent: #ffca68;
+      --panel: rgba(14, 27, 43, .82);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-width: 280px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 50% 22%, rgba(44, 86, 120, .24), transparent 40%),
+        linear-gradient(145deg, #0b1725 0%, #050a12 72%);
+    }
+
+    .toy {
+      width: min(900px, 100%);
+      height: min(690px, 100%);
+      min-height: 420px;
+      display: grid;
+      grid-template-rows: auto minmax(210px, 1fr) auto;
+      padding: clamp(18px, 4vw, 42px);
+      isolation: isolate;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid rgba(190, 217, 235, .14);
+      padding-bottom: 17px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      line-height: 1;
+      letter-spacing: -.035em;
+      font-weight: 650;
+    }
+
+    .live {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    #reading {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      line-height: .8;
+      font-weight: 720;
+      letter-spacing: -.045em;
+    }
+
+    .unit {
+      color: #d9b86f;
+      font-size: .82rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      margin: 8px 0;
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 8%;
+      right: 8%;
+      bottom: 5%;
+      height: 18%;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, .36);
+      filter: blur(22px);
+    }
+
+    svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+    .grid-line { stroke: #b7d3e8; stroke-opacity: .065; stroke-width: 1; }
+    .post { fill: #17293a; stroke: #314960; stroke-width: 2; }
+    .post-top { fill: #f1bd5a; }
+    .socket { fill: #08111d; stroke: #ffcd70; stroke-width: 4; }
+    .cable-shadow { fill: none; stroke: #000; stroke-opacity: .58; stroke-width: 13; stroke-linecap: round; }
+    .cable-glow { fill: none; stroke: #6ac7ff; stroke-opacity: .17; stroke-width: 15; stroke-linecap: round; filter: blur(7px); }
+    .cable { fill: none; stroke: var(--line); stroke-width: 7; stroke-linecap: round; }
+    .cable-highlight { fill: none; stroke: white; stroke-opacity: .5; stroke-width: 1.5; stroke-linecap: round; transform: translateY(-1.5px); }
+
+    .controls {
+      border: 1px solid rgba(169, 205, 230, .15);
+      border-radius: 18px;
+      padding: 18px clamp(17px, 4vw, 26px) 16px;
+      background: linear-gradient(180deg, rgba(18, 35, 54, .82), rgba(10, 21, 34, .9));
+      box-shadow: 0 18px 60px rgba(0, 0, 0, .28), inset 0 1px rgba(255,255,255,.04);
+    }
+
+    .control-top, .scale {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    label {
+      font-size: .95rem;
+      font-weight: 650;
+      letter-spacing: .015em;
+    }
+
+    #state {
+      color: var(--muted);
+      font-size: .84rem;
+    }
+
+    input[type="range"] {
+      --p: 44%;
+      width: 100%;
+      height: 44px;
+      margin: 4px 0 0;
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      cursor: ew-resize;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 7px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) var(--p), #253a4d var(--p));
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.65);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 7px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent) var(--p), #253a4d var(--p));
+      box-shadow: inset 0 1px 3px rgba(0,0,0,.65);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 28px;
+      height: 28px;
+      margin-top: -10.5px;
+      appearance: none;
+      -webkit-appearance: none;
+      border-radius: 50%;
+      border: 4px solid #09131f;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px #f7dca4, 0 5px 14px rgba(0,0,0,.55);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      border: 4px solid #09131f;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px #f7dca4, 0 5px 14px rgba(0,0,0,.55);
+    }
+
+    input[type="range"]:focus-visible { outline: 2px solid #8dd6ff; outline-offset: 3px; border-radius: 8px; }
+
+    .scale {
+      color: #718395;
+      font-size: .7rem;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    @media (max-height: 500px) {
+      .toy { grid-template-rows: auto minmax(190px, 1fr) auto; padding-top: 14px; padding-bottom: 14px; }
+      header { padding-bottom: 11px; }
+      .controls { padding-top: 11px; padding-bottom: 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="toy">
+    <header>
+      <h1>Cable Tension</h1>
+      <div class="live" aria-live="polite"><output id="reading" for="tension">44</output><span class="unit">N</span></div>
+    </header>
+
+    <div class="stage" aria-hidden="true">
+      <svg viewBox="0 0 800 430" preserveAspectRatio="xMidYMid meet">
+        <g>
+          <path class="grid-line" d="M80 90H720M80 150H720M80 210H720M80 270H720M80 330H720" />
+          <path class="grid-line" d="M160 55V375M280 55V375M400 55V375M520 55V375M640 55V375" />
+        </g>
+        <rect class="post" x="54" y="106" width="34" height="253" rx="12" />
+        <rect class="post" x="712" y="106" width="34" height="253" rx="12" />
+        <rect class="post-top" x="49" y="99" width="44" height="15" rx="7.5" />
+        <rect class="post-top" x="707" y="99" width="44" height="15" rx="7.5" />
+        <circle class="socket" cx="71" cy="123" r="10" />
+        <circle class="socket" cx="729" cy="123" r="10" />
+        <path id="shadow" class="cable-shadow" />
+        <path id="glow" class="cable-glow" />
+        <path id="cable" class="cable" />
+        <path id="shine" class="cable-highlight" />
+      </svg>
+    </div>
+
+    <section class="controls" aria-label="Cable controls">
+      <div class="control-top">
+        <label for="tension">Tension</label>
+        <span id="state">Relaxed curve</span>
+      </div>
+      <input id="tension" type="range" min="10" max="100" value="44" step="1" aria-describedby="state">
+      <div class="scale" aria-hidden="true"><span>Slack</span><span>Taut</span></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const slider = document.querySelector('#tension');
+      const reading = document.querySelector('#reading');
+      const state = document.querySelector('#state');
+      const paths = ['shadow', 'glow', 'cable', 'shine'].map(id => document.getElementById(id));
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let current = Number(slider.value);
+      let target = current;
+
+      function cablePath(tension) {
+        const normalized = (tension - 10) / 90;
+        const sag = 228 * Math.pow(1 - normalized, 1.45) + 18;
+        const y = 123;
+        return `M71 ${y} C232 ${y + sag * .08}, 259 ${y + sag}, 400 ${y + sag} S568 ${y + sag * .08}, 729 ${y}`;
+      }
+
+      function draw(value) {
+        const d = cablePath(value);
+        paths.forEach(path => path.setAttribute('d', d));
+      }
+
+      function describe(value) {
+        if (value < 30) return 'Deep sag';
+        if (value < 58) return 'Relaxed curve';
+        if (value < 82) return 'Drawing tight';
+        return 'Nearly taut';
+      }
+
+      function setTarget() {
+        target = Number(slider.value);
+        reading.value = target;
+        reading.textContent = target;
+        state.textContent = describe(target);
+        const progress = ((target - 10) / 90) * 100;
+        slider.style.setProperty('--p', `${progress}%`);
+        slider.setAttribute('aria-valuetext', `${target} newtons, ${describe(target)}`);
+        if (reduceMotion) {
+          current = target;
+          draw(current);
+        }
+      }
+
+      function animate() {
+        const delta = target - current;
+        current = Math.abs(delta) < .01 ? target : current + delta * .13;
+        draw(current);
+        requestAnimationFrame(animate);
+      }
+
+      slider.addEventListener('input', setTarget);
+      setTarget();
+      draw(current);
+      if (!reduceMotion) requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

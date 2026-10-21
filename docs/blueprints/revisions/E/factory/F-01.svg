@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+<title id="title">F-01 Factory operating surface / direction and review</title>
+<desc id="desc">Revision E draft. PASS / FAIL review with details on request. Production line with independent order recipient, all-output default worker filtering, three worker status cells with direct individual Stop controls. Fixed frame; section-only scrolling. Proposed, not implemented.</desc>
+<defs>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto">
+<path d="M0 0L8 4L0 8" fill="none" stroke="#203d52"/>
+</marker>
+</defs>
+<style>svg{background:#fafbf8}text{font-family:ui-monospace,Menlo,monospace;fill:#203d52}.text{font-size:20px}.note{font-size:18px}.small{font-size:15px}.title{font-size:30px;font-weight:bold}.outline{fill:none;stroke:#203d52;stroke-width:2}.stage{fill:#edf3f4;stroke:#203d52;stroke-width:2}.supplied{fill:#f0f1e8;stroke:#203d52;stroke-width:2}.draft{font-size:19px;fill:#93432c;font-weight:bold}</style>
+<rect x="24" y="24" width="1552" height="1052" class="outline"/>
+<text x="55" y="70" class="title">ATOMIC FACTORY / F-01 / REV E</text>
+<text x="55" y="113" class="title">Factory operating surface / direction and review</text>
+<text x="1090" y="66" class="draft">DRAFT / APPROVAL PENDING</text>
+<text x="1090" y="99" class="small">2026-09-16 / NTS</text>
+<text x="55" y="155" class="note">DONOVAN + FACTORY ENGINEERING ONLY — never supplied as worker construction material</text>
+<rect x="60" y="200" width="1480" height="65" class="supplied"/>
+<text x="76" y="230" class="text">PRODUCTION LINE 01 / CURRENT RUN + CANDIDATE / BLUEPRINTS / FACTORY HOME</text>
+<rect x="60" y="285" width="320" height="540" class="outline"/>
+<text x="76" y="315" class="text">DIRECTION / REFERENCES</text>
+<text x="80" y="350" class="note">Grounded concept cards</text>
+<text x="80" y="377" class="note">Select from several options</text>
+<text x="80" y="404" class="note">Inspect source records</text>
+<text x="80" y="431" class="note">Choose proposed mechanic</text>
+<text x="80" y="458" class="note">Inspect assembled order</text>
+<text x="80" y="485" class="note">Issue / correct / rework</text>
+<text x="80" y="512" class="note">Typing is an exception,</text>
+<text x="80" y="539" class="note">not the starting task.</text>
+<rect x="80" y="570" width="280" height="105" class="supplied"/>
+<text x="96" y="596" class="small">ORDER RECIPIENT / SELECT ONE</text>
+<text x="96" y="625" class="text">[01]    [02]    [03]</text>
+<text x="96" y="652" class="small">Independent of rack filter</text>
+<text x="80" y="710" class="small">Issue to chosen worker only.</text>
+<text x="80" y="737" class="small">Busy: explicit queue / reject;</text>
+<text x="80" y="764" class="small">never silently reroute work.</text>
+<rect x="400" y="285" width="750" height="380" class="stage"/>
+<text x="416" y="315" class="text">TOY / FIRST ENCOUNTER</text>
+<text x="595" y="475" class="text">UNPRIMED VISUAL EXPLORATION</text>
+<rect x="400" y="685" width="750" height="90" class="supplied"/>
+<text x="416" y="715" class="text">PERMANENT SLIDER + ESSENTIAL READOUT</text>
+<rect x="400" y="795" width="750" height="55" class="outline"/>
+<text x="416" y="825" class="text">[ PASS ]     [ FAIL ]                        Details</text>
+<rect x="1170" y="285" width="370" height="565" class="outline"/>
+<text x="1186" y="315" class="text">OUTPUT RACK / ALL WORKERS</text>
+<text x="1190" y="348" class="small">Default: ALL • bar filters only</text>
+<text x="1190" y="375" class="small">Each item: worker + toy + version</text>
+<rect x="1190" y="400" width="305" height="95" class="supplied"/>
+<text x="1206" y="430" class="text">01 / TOY A / V2</text>
+<text x="1206" y="460" class="small">PASS / FAIL</text>
+<rect x="1190" y="515" width="305" height="95" class="supplied"/>
+<text x="1206" y="545" class="text">02 / TOY B / V1</text>
+<text x="1206" y="575" class="small">PASS / FAIL</text>
+<rect x="1190" y="630" width="305" height="95" class="supplied"/>
+<text x="1206" y="660" class="text">03 / TOY C / V1</text>
+<text x="1206" y="690" class="small">PASS / FAIL</text>
+<text x="1190" y="772" class="small">Select toy → center inspection.</text>
+<text x="1190" y="799" class="small">No operations / administration.</text>
+<path d="M1526 400V805M1520 400L1526 390L1532 400M1520 805L1526 815L1532 805" class="outline"/>
+<rect x="60" y="865" width="1480" height="65" class="supplied"/>
+<rect x="70" y="875" width="115" height="45" class="outline"/>
+<text x="87" y="903" class="text">[ALL]</text>
+<text x="205" y="888" class="small">[WORKER 01] / ACTUAL STATUS</text>
+<text x="205" y="918" class="small">Activity / access requests</text>
+<rect x="510" y="875" width="100" height="45" class="outline"/>
+<text x="526" y="903" class="text">STOP</text>
+<text x="650" y="888" class="small">[WORKER 02] / ACTUAL STATUS</text>
+<text x="650" y="918" class="small">Activity / access requests</text>
+<rect x="955" y="875" width="100" height="45" class="outline"/>
+<text x="971" y="903" class="text">STOP</text>
+<text x="1095" y="888" class="small">[WORKER 03] / ACTUAL STATUS</text>
+<text x="1095" y="918" class="small">Activity / access requests</text>
+<rect x="1400" y="875" width="100" height="45" class="outline"/>
+<text x="1416" y="903" class="text">STOP</text>
+<text x="60" y="950" class="small">Fixed frame / section-only scroll. Worker chip filters rack, not recipient. Stop targets only its worker's active run.</text>
+<path d="M365 570V790M359 570L365 560L371 570M359 790L365 800L371 790" class="outline"/>
+<text x="80" y="810" class="small">Section-only scrolling</text>
+<path d="M24 970H1576M1050 970V1076M1350 970V1076" class="outline"/>
+<text x="55" y="1004" class="note">NEW GENERATION / DRAWINGS ARE PROPOSALS, NOT SHIPPED REQUIREMENTS</text>
+<text x="55" y="1031" class="note">Solid boundary • Shaded region: supplied surface • NTS: schematic / not to scale</text>
+<text x="1070" y="1004" class="note">Drawn: Codex</text>
+<text x="1070" y="1031" class="small">Approval: Donovan / pending</text>
+<text x="1370" y="1004" class="note">F-01 / REV E</text>
+<text x="1370" y="1031" class="note">2026-09-16</text>
+</svg>

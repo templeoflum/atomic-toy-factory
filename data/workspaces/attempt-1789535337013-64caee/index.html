@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lean — Falling Distribution</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5f3ed;
+      --muted: #aaa8a2;
+      --line: rgba(255,255,255,.12);
+      --accent: #ffcc66;
+      --cyan: #62e6d2;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body {
+      overflow: hidden;
+      background: #111315;
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      -webkit-font-smoothing: antialiased;
+    }
+    main {
+      width: 100%; height: 100%; min-height: 310px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      padding: clamp(16px, 3vw, 34px);
+      gap: clamp(10px, 2vh, 22px);
+      background:
+        radial-gradient(circle at 50% 18%, rgba(98,230,210,.075), transparent 35%),
+        linear-gradient(115deg, rgba(255,255,255,.018), transparent 35%);
+    }
+    header { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    h1 { font: 600 clamp(22px, 4vw, 40px)/.95 inherit; letter-spacing: -.07em; margin: 0; }
+    .kicker { margin: 0 0 7px; color: var(--cyan); font-size: 10px; letter-spacing: .19em; text-transform: uppercase; }
+    .count { text-align: right; color: var(--muted); font-size: 11px; line-height: 1.5; white-space: nowrap; }
+    .count strong { display: block; color: var(--ink); font-size: 16px; font-weight: 500; }
+    .stage {
+      min-height: 0; position: relative; overflow: hidden;
+      border: 1px solid var(--line); border-radius: 16px;
+      background: rgba(5,7,8,.48);
+      box-shadow: inset 0 1px rgba(255,255,255,.035), 0 18px 60px rgba(0,0,0,.25);
+    }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hint {
+      position: absolute; top: 12px; left: 14px; margin: 0;
+      color: rgba(255,255,255,.42); font-size: 9px; letter-spacing: .12em;
+      text-transform: uppercase; pointer-events: none;
+    }
+    .controls {
+      display: grid; grid-template-columns: minmax(70px, auto) minmax(140px, 1fr) minmax(98px, auto);
+      align-items: center; gap: clamp(10px, 2.2vw, 24px);
+    }
+    label { font-size: 11px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+    input[type="range"] {
+      --pct: 50%; width: 100%; height: 34px; margin: 0; cursor: ew-resize;
+      appearance: none; -webkit-appearance: none; background: transparent;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px; border-radius: 5px;
+      background: linear-gradient(90deg, var(--accent) 0 var(--pct), rgba(255,255,255,.16) var(--pct) 100%);
+    }
+    input[type="range"]::-moz-range-track { height: 4px; border-radius: 5px; background: rgba(255,255,255,.16); }
+    input[type="range"]::-moz-range-progress { height: 4px; border-radius: 5px; background: var(--accent); }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none; -webkit-appearance: none; width: 24px; height: 24px; margin-top: -10px;
+      border: 3px solid #111315; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 4px 16px rgba(0,0,0,.45);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px; border: 3px solid #111315; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 0 1px rgba(255,255,255,.25);
+    }
+    input[type="range"]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 8px; }
+    output { text-align: right; font-size: 11px; color: var(--muted); white-space: nowrap; }
+    output strong { display: block; color: var(--accent); font-size: 14px; font-weight: 600; }
+    @media (max-width: 480px) {
+      main { padding: 14px; gap: 10px; }
+      .controls { grid-template-columns: 1fr auto; gap: 4px 12px; }
+      .controls label { grid-column: 1; grid-row: 1; }
+      .controls output { grid-column: 2; grid-row: 1; }
+      .controls input { grid-column: 1 / -1; grid-row: 2; }
+    }
+    @media (prefers-reduced-motion: reduce) { .hint { display: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="kicker">Probability study</p><h1>Lean</h1></div>
+      <div class="count"><strong id="total">0 marks</strong>each choice shapes the whole</div>
+    </header>
+    <section class="stage" aria-label="Animated probability board showing falling marks collecting into a distribution">
+      <canvas id="board" role="img" aria-label="Marks fall through a peg board and accumulate in bins"></canvas>
+      <p class="hint">live sample</p>
+    </section>
+    <div class="controls">
+      <label for="bias">Landing bias</label>
+      <input id="bias" type="range" min="-40" max="40" value="0" step="1" aria-describedby="bias-readout">
+      <output id="bias-readout" for="bias"><strong>centered</strong>50% right</output>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+      const canvas = document.querySelector('#board');
+      const ctx = canvas.getContext('2d');
+      const slider = document.querySelector('#bias');
+      const readout = document.querySelector('#bias-readout');
+      const totalEl = document.querySelector('#total');
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const rows = 10, bins = rows + 1;
+      const counts = Array(bins).fill(0);
+      const flyers = [];
+      let total = 0, last = 0, accumulator = 0, w = 0, h = 0, dpr = 1;
+
+      function probability() { return .5 + Number(slider.value) / 100; }
+
+      function updateControl() {
+        const v = Number(slider.value), p = Math.round(probability() * 100);
+        const label = v === 0 ? 'centered' : `${Math.abs(v)}% ${v < 0 ? 'left' : 'right'}`;
+        readout.innerHTML = `<strong>${label}</strong>${p}% right`;
+        slider.style.setProperty('--pct', `${(v + 40) / 80 * 100}%`);
+        slider.setAttribute('aria-valuetext', `${label}, ${p} percent chance of moving right`);
+      }
+
+      function resize() {
+        const r = canvas.getBoundingClientRect();
+        dpr = Math.min(devicePixelRatio || 1, 2);
+        w = Math.max(1, r.width); h = Math.max(1, r.height);
+        canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function spawn() {
+        const path = [0]; let position = 0;
+        for (let r = 0; r < rows; r++) {
+          if (Math.random() < probability()) position++;
+          path.push(position);
+        }
+        flyers.push({ path, born: performance.now(), duration: reduceMotion ? 480 : 1800 + Math.random() * 450 });
+      }
+
+      function geometry() {
+        const top = Math.max(38, h * .09);
+        const floor = h - Math.max(52, h * .18);
+        const boardH = floor - top;
+        const spacing = Math.min((w - 30) / (bins + 1), boardH / (rows + 1) * 1.62);
+        const cx = w / 2;
+        return { top, floor, boardH, spacing, cx };
+      }
+
+      function pegPoint(row, rightCount, g) {
+        return {
+          x: g.cx + (rightCount - row / 2) * g.spacing,
+          y: g.top + row * (g.boardH / (rows + 1))
+        };
+      }
+
+      function roundedRect(x, y, width, height, radius) {
+        const r = Math.min(radius, width / 2, height / 2);
+        ctx.beginPath(); ctx.roundRect(x, y, width, height, r);
+      }
+
+      function drawBoard(g) {
+        ctx.lineWidth = 1;
+        for (let row = 0; row < rows; row++) {
+          for (let i = 0; i <= row; i++) {
+            const p = pegPoint(row, i, g);
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(245,243,237,.31)'; ctx.fill();
+          }
+        }
+
+        const binW = g.spacing * .78;
+        const maxCount = Math.max(12, ...counts);
+        const maxBar = Math.max(22, h - g.floor - 18);
+        for (let i = 0; i < bins; i++) {
+          const x = g.cx + (i - rows / 2) * g.spacing;
+          const barH = counts[i] ? Math.max(3, counts[i] / maxCount * maxBar) : 0;
+          ctx.strokeStyle = 'rgba(255,255,255,.12)'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(x - binW / 2, g.floor + 4); ctx.lineTo(x - binW / 2, h - 10);
+          ctx.moveTo(x + binW / 2, g.floor + 4); ctx.lineTo(x + binW / 2, h - 10); ctx.stroke();
+          if (barH) {
+            const grad = ctx.createLinearGradient(0, h - 11 - barH, 0, h - 11);
+            grad.addColorStop(0, '#ffcf70'); grad.addColorStop(1, '#e8874d');
+            ctx.fillStyle = grad; roundedRect(x - binW * .34, h - 11 - barH, binW * .68, barH, 4); ctx.fill();
+          }
+        }
+        ctx.strokeStyle = 'rgba(255,255,255,.2)';
+        ctx.beginPath(); ctx.moveTo(12, h - 10.5); ctx.lineTo(w - 12, h - 10.5); ctx.stroke();
+      }
+
+      function drawFlyers(now, g) {
+        for (let n = flyers.length - 1; n >= 0; n--) {
+          const f = flyers[n];
+          const progress = Math.min(1, (now - f.born) / f.duration);
+          const scaled = progress * (rows + 1);
+          const step = Math.min(rows, Math.floor(scaled));
+          const t = Math.min(1, scaled - step);
+          const a = pegPoint(step, f.path[step], g);
+          const b = step === rows
+            ? { x: g.cx + (f.path[rows] - rows / 2) * g.spacing, y: g.floor }
+            : pegPoint(step + 1, f.path[step + 1], g);
+          const eased = t * t * (3 - 2 * t);
+          const x = a.x + (b.x - a.x) * eased;
+          const y = a.y + (b.y - a.y) * t + Math.sin(t * Math.PI) * -6;
+          ctx.shadowColor = 'rgba(98,230,210,.55)'; ctx.shadowBlur = 12;
+          ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#78ead8'; ctx.fill(); ctx.shadowBlur = 0;
+          if (progress >= 1) {
+            counts[f.path[rows]]++; total++;
+            totalEl.textContent = `${total.toLocaleString()} ${total === 1 ? 'mark' : 'marks'}`;
+            flyers.splice(n, 1);
+          }
+        }
+      }
+
+      function frame(now) {
+        const dt = Math.min(40, now - last || 16); last = now;
+        accumulator += dt;
+        const interval = reduceMotion ? 380 : 115;
+        while (accumulator >= interval) { spawn(); accumulator -= interval; }
+        ctx.clearRect(0, 0, w, h);
+        const g = geometry(); drawBoard(g); drawFlyers(now, g);
+        requestAnimationFrame(frame);
+      }
+
+      slider.addEventListener('input', updateControl);
+      new ResizeObserver(resize).observe(canvas);
+      updateControl(); resize();
+      for (let i = 0; i < 7; i++) { spawn(); flyers[i].born -= i * 140; }
+      requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>

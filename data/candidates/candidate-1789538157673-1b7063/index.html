@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07131b">
+  <title>Standing Wave</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #ecf9f6;
+      --muted: #91aaa8;
+      --aqua: #68f8dc;
+      --aqua-soft: rgba(104, 248, 220, .16);
+      --gold: #ffcc6e;
+      --panel: rgba(11, 30, 39, .82);
+      --line: rgba(188, 238, 228, .15);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-width: 280px;
+      min-height: 360px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(38, 116, 117, .2), transparent 35rem),
+        linear-gradient(145deg, #061017, #0a1d25 58%, #07131b);
+    }
+
+    main {
+      width: min(920px, 100%);
+      height: min(650px, 100%);
+      padding: clamp(18px, 4vw, 42px);
+      display: grid;
+      grid-template-rows: auto minmax(190px, 1fr) auto;
+      gap: clamp(16px, 3vh, 28px);
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 4vw, 2.4rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+      font-weight: 720;
+    }
+
+    .readout {
+      flex: 0 0 auto;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    output {
+      display: block;
+      font-size: clamp(1.1rem, 3vw, 1.45rem);
+      line-height: 1;
+      font-weight: 740;
+      color: var(--aqua);
+    }
+
+    .readout small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(rgba(121, 216, 203, .055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(121, 216, 203, .055) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(14, 40, 50, .84), rgba(7, 21, 29, .92));
+      background-size: 28px 28px, 28px 28px, auto;
+      box-shadow: inset 0 1px rgba(255,255,255,.04), 0 28px 65px rgba(0,0,0,.26);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(2, 10, 15, .32));
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .control {
+      padding: 18px clamp(18px, 4vw, 30px) 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      box-shadow: inset 0 1px rgba(255,255,255,.04);
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 13px;
+      font-size: .91rem;
+      font-weight: 680;
+      letter-spacing: .01em;
+    }
+
+    label span:last-child {
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 520;
+    }
+
+    input[type="range"] {
+      --pos: 0%;
+      width: 100%;
+      height: 32px;
+      margin: 0;
+      display: block;
+      cursor: pointer;
+      appearance: none;
+      background: transparent;
+      touch-action: pan-x;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 7px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--aqua) var(--pos), rgba(142, 181, 179, .24) var(--pos));
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.4);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      margin-top: -9.5px;
+      border: 3px solid #08212a;
+      border-radius: 50%;
+      background: var(--aqua);
+      box-shadow: 0 0 0 3px rgba(104,248,220,.18), 0 5px 14px rgba(0,0,0,.42);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 7px;
+      border: 0;
+      border-radius: 99px;
+      background: rgba(142, 181, 179, .24);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 7px;
+      border-radius: 99px;
+      background: var(--aqua);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #08212a;
+      border-radius: 50%;
+      background: var(--aqua);
+      box-shadow: 0 0 0 3px rgba(104,248,220,.18), 0 5px 14px rgba(0,0,0,.42);
+    }
+
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px #08212a, 0 0 0 8px var(--gold); }
+    input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px #08212a, 0 0 0 8px var(--gold); }
+
+    @media (max-height: 480px) {
+      main { grid-template-rows: auto minmax(150px, 1fr) auto; gap: 10px; padding: 12px; }
+      .control { padding: 10px 18px 12px; }
+      label { margin-bottom: 5px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      canvas { opacity: .98; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Standing Wave</h1>
+      <div class="readout">
+        <output id="nodeOutput" for="nodeSlider" aria-live="polite">2 nodes</output>
+        <small id="modeOutput">Fundamental mode</small>
+      </div>
+    </header>
+
+    <section class="stage" aria-label="Animated standing wave fixed at both ends">
+      <canvas id="waveCanvas"></canvas>
+    </section>
+
+    <div class="control">
+      <label for="nodeSlider">
+        <span>Number of nodes</span>
+        <span>fixed ends included</span>
+      </label>
+      <input id="nodeSlider" type="range" min="2" max="9" value="2" step="1" aria-describedby="modeOutput">
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const canvas = document.getElementById('waveCanvas');
+      const stage = canvas.parentElement;
+      const slider = document.getElementById('nodeSlider');
+      const nodeOutput = document.getElementById('nodeOutput');
+      const modeOutput = document.getElementById('modeOutput');
+      const ctx = canvas.getContext('2d');
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      const modeNames = ['Fundamental', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth'];
+      let width = 0;
+      let height = 0;
+      let nodes = Number(slider.value);
+      let phase = Math.PI / 2;
+      let previousTime = performance.now();
+
+      function resize() {
+        const rect = stage.getBoundingClientRect();
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function update() {
+        nodes = Number(slider.value);
+        const harmonic = nodes - 1;
+        nodeOutput.value = `${nodes} nodes`;
+        nodeOutput.textContent = `${nodes} nodes`;
+        modeOutput.textContent = `${modeNames[harmonic - 1]} mode · ${harmonic} ${harmonic === 1 ? 'loop' : 'loops'}`;
+        slider.style.setProperty('--pos', `${((nodes - 2) / 7) * 100}%`);
+      }
+
+      function dot(x, y, radius, fill, glow = 0) {
+        ctx.save();
+        ctx.fillStyle = fill;
+        if (glow) {
+          ctx.shadowColor = fill;
+          ctx.shadowBlur = glow;
+        }
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawWave(time) {
+        const dt = Math.min((time - previousTime) / 1000, .05);
+        previousTime = time;
+        if (!reducedMotion.matches) phase += dt * 2.15;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const left = Math.max(34, width * .075);
+        const right = width - left;
+        const center = height / 2;
+        const span = right - left;
+        const amplitude = Math.min(height * .29, span / Math.max(nodes - 1, 2) * .55, 98);
+        const harmonic = nodes - 1;
+        const pulse = reducedMotion.matches ? 1 : Math.sin(phase);
+
+        ctx.save();
+        ctx.setLineDash([5, 7]);
+        ctx.strokeStyle = 'rgba(173, 226, 218, .18)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(left, center);
+        ctx.lineTo(right, center);
+        ctx.stroke();
+        ctx.restore();
+
+        const gradient = ctx.createLinearGradient(left, 0, right, 0);
+        gradient.addColorStop(0, '#9dfff0');
+        gradient.addColorStop(.5, '#68f8dc');
+        gradient.addColorStop(1, '#9dfff0');
+
+        ctx.save();
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = 'rgba(104, 248, 220, .72)';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        const samples = Math.max(220, Math.round(span));
+        for (let i = 0; i <= samples; i++) {
+          const u = i / samples;
+          const x = left + u * span;
+          const y = center - Math.sin(harmonic * Math.PI * u) * amplitude * pulse;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        for (let i = 0; i < nodes; i++) {
+          const x = left + (i / harmonic) * span;
+          const end = i === 0 || i === nodes - 1;
+          if (end) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 204, 110, .42)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x, center - 25);
+            ctx.lineTo(x, center + 25);
+            ctx.stroke();
+            ctx.restore();
+            dot(x, center, 7, '#ffcc6e', 12);
+            dot(x, center, 2.5, '#fff4cf');
+          } else {
+            dot(x, center, 5, '#b8fff3', 9);
+            dot(x, center, 2, '#f2fffc');
+          }
+        }
+
+        requestAnimationFrame(drawWave);
+      }
+
+      slider.addEventListener('input', update);
+      new ResizeObserver(resize).observe(stage);
+      reducedMotion.addEventListener?.('change', () => { phase = Math.PI / 2; });
+      update();
+      resize();
+      requestAnimationFrame(drawWave);
+    })();
+  </script>
+</body>
+</html>
